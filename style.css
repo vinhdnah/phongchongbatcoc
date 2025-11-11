@@ -264,6 +264,27 @@ body {
   border-bottom: 1px solid #111827;
 }
 
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  font-size: 20px;
+  margin-right: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.back-btn:hover {
+  color: #60a5fa;
+  transform: translateX(-1px);
+}
+
+.phone-header {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* để không đụng avatar */
+}
+
 /* Avatar trong phần header chat (Crush Bắc Sơn) */
 .phone-header-avatar {
   width: 28px;
@@ -364,6 +385,11 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.inbox-item-crush-blocked .inbox-preview {
+  color: #6b7280;
+  font-style: italic;
 }
 
 .inbox-time {
@@ -811,4 +837,14 @@ body {
   vertical-align: middle;
   margin-right: 8px;
   transform: translateY(-1px);
+}
+
+.blocked-msg {
+  text-align: center;
+  color: #fca5a5;
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 180px; /* đẩy vào giữa khung chat */
+  opacity: 0.9;
+  letter-spacing: 0.4px;
 }
