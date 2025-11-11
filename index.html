@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mật mã Bắc Sơn – Minigame</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-root">
+    <!-- Cảnh phòng ngủ tại nhà -->
+    <div id="room-scene">
+      <div id="room-inner">
+        <div class="room-wall"></div>
+        <div class="room-window"></div>
+        <div class="room-desk"></div>
+        <div class="room-pc"></div>
+
+        <div id="room-girl" class="girl">
+          <div id="room-phone" class="phone-small hidden"></div>
+        </div>
+
+        <div id="room-noti" class="floating-noti hidden">
+          💬 Điện thoại rung... Bạn nhận được một tin nhắn lạ.
+        </div>
+
+        <div class="room-caption">
+          Tối muộn tại phòng ngủ của bạn ở Bắc Sơn. Bạn vừa online xem lại điểm kiểm tra...
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer hiển thị khung chat, cuộc gọi, câu 3, kết quả -->
+    <div id="dialog-layer" class="hidden"></div>
+
+    <!-- Audio cuộc gọi (bạn tự thay file) -->
+    <audio id="call-audio" src="call.mp3"></audio>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

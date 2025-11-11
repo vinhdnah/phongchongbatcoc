@@ -1,0 +1,662 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: #020617;
+  color: #f9fafb;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#game-root {
+  width: 100vw;
+  height: 100vh;
+  max-width: 1100px;
+  max-height: 700px;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.7);
+  background: #020617;
+}
+
+/* ---------- PHÒNG NGỦ ---------- */
+
+#room-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #0f172a, #020617 60%, #000 100%);
+}
+
+#room-inner {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  height: 80%;
+  border-radius: 24px;
+  border: 2px solid #111827;
+  background: linear-gradient(to bottom, #020617 0%, #020617 55%, #020617 100%);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
+  overflow: hidden;
+}
+
+/* tường */
+.room-wall {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, #0b1120, #020617 70%);
+}
+
+/* cửa sổ */
+.room-window {
+  position: absolute;
+  width: 160px;
+  height: 80px;
+  left: 60px;
+  top: 40px;
+  border-radius: 12px;
+  background: radial-gradient(circle at top, #38bdf8, #0b1120);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+}
+
+/* bàn */
+.room-desk {
+  position: absolute;
+  width: 260px;
+  height: 26px;
+  right: 80px;
+  bottom: 130px;
+  background: #111827;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.8);
+}
+
+/* màn hình PC */
+.room-pc {
+  position: absolute;
+  width: 150px;
+  height: 90px;
+  right: 135px;
+  bottom: 160px;
+  background: radial-gradient(circle at top, #22d3ee, #0f172a);
+  border-radius: 14px;
+  border: 3px solid #020617;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.7);
+}
+
+/* nhân vật nữ */
+.girl {
+  position: absolute;
+  width: 80px;
+  height: 120px;
+  left: 160px;
+  bottom: 110px;
+}
+
+/* thân */
+.girl::before {
+  content: "";
+  position: absolute;
+  width: 46px;
+  height: 60px;
+  left: 17px;
+  bottom: 20px;
+  background: #f97316;
+  border-radius: 16px;
+  box-shadow: 0 0 0 3px #000;
+}
+
+/* đầu + tóc */
+.girl::after {
+  content: "";
+  position: absolute;
+  width: 52px;
+  height: 48px;
+  left: 14px;
+  bottom: 70px;
+  background: #9f1239;
+  border-radius: 18px;
+  box-shadow: 0 0 0 3px #000;
+}
+
+/* điện thoại nhỏ trong tay */
+.phone-small {
+  position: absolute;
+  width: 20px;
+  height: 34px;
+  right: 0;
+  bottom: 60px;
+  background: #020617;
+  border-radius: 6px;
+  border: 2px solid #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+.hidden {
+  display: none;
+}
+
+.floating-noti {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(56, 189, 248, 0.7);
+  color: #e0f2fe;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.9);
+  animation: float 1.4s ease-in-out infinite alternate;
+}
+
+.room-caption {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 10px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+@keyframes float {
+  from {
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    transform: translateX(-50%) translateY(-4px);
+  }
+}
+
+/* ---------- DIALOG LAYER ---------- */
+
+#dialog-layer {
+  position: absolute;
+  inset: 0;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.96));
+}
+
+.dialog-layout {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  max-width: 900px;
+  width: 100%;
+}
+
+.dialog-avatar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-avatar .avatar-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top, #f97316, #9f1239);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.9);
+  border: 4px solid #020617;
+}
+
+.dialog-avatar .avatar-name {
+  font-size: 15px;
+  color: #e5e7eb;
+}
+
+/* ---------- ĐIỆN THOẠI (CHAT/CALL) ---------- */
+
+/* SAU KHI SỬA – khung dài hơn */
+.phone-shell {
+  flex: 1.4;
+  max-width: 360px;
+  height: 600px;  /* hoặc 620px nếu bạn muốn dài hơn nữa */
+  border-radius: 26px;
+  border: 3px solid #111827;
+  background: #020617;
+  box-shadow: 0 16px 44px rgba(15, 23, 42, 0.95);
+  padding: 8px 10px 12px;
+  position: relative;
+  animation: popIn 0.5s ease-out;
+}
+
+
+.phone-shell::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 8px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid #111827;
+}
+
+/* header messenger */
+.phone-header {
+  margin-top: 14px;
+  padding: 6px 10px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #111827;
+}
+
+.phone-header-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top, #22c55e, #15803d);
+}
+
+.phone-header-info {
+  flex: 1;
+}
+
+.phone-header-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.phone-header-sub {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* khu chat */
+.phone-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 310px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+/* bong bóng chat */
+.bubble {
+  display: inline-block;
+  padding: 8px 10px;
+  border-radius: 16px;
+  max-width: 220px;
+  line-height: 1.4;
+}
+
+.bubble.them {
+  align-self: flex-start;
+  background: #1f2937;
+  border-bottom-left-radius: 4px;
+}
+
+.bubble.me {
+  align-self: flex-end;
+  background: #2563eb;
+  border-bottom-right-radius: 4px;
+}
+
+.bubble-meta {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: -2px;
+}
+
+/* footer */
+.phone-footer {
+  padding: 8px 10px 4px;
+  border-top: 1px solid #111827;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* vùng lựa chọn */
+.choice-panel {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.choice-btn {
+  width: 100%;
+  text-align: left;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.choice-btn span.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  font-size: 12px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.choice-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.9);
+  border-color: #38bdf8;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.95));
+}
+
+/* ---------- CALL UI ---------- */
+
+.call-screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.call-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.call-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.call-sub {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.call-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: #e5e7eb;
+  margin-top: 4px;
+}
+
+.call-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top, #22c55e, #16a34a);
+  box-shadow: 0 16px 40px rgba(22, 163, 74, 0.8);
+  border: 4px solid #020617;
+}
+
+/* nút nhận / từ chối */
+.call-actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.call-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9fafb;
+  font-size: 22px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.9);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.call-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.9);
+}
+
+.call-btn.decline {
+  background: #dc2626;
+}
+
+.call-btn.accept {
+  background: #22c55e;
+}
+
+/* ---------- CÂU 3 & KẾT QUẢ ---------- */
+
+.scene-card {
+  max-width: 840px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 18px;
+  padding: 18px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.95);
+  animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.scene-tag {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #93c5fd;
+  margin-bottom: 6px;
+}
+
+.scene-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.scene-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e5e7eb;
+  margin-bottom: 12px;
+}
+
+.chat-box {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(30, 64, 175, 0.22);
+  border: 1px solid rgba(59, 130, 246, 0.6);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #93c5fd;
+  margin-bottom: 4px;
+}
+
+.question {
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  color: #fee2e2;
+}
+
+.options {
+  display: grid;
+  gap: 8px;
+}
+
+.option-btn {
+  width: 100%;
+  text-align: left;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.option-btn span.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  font-size: 12px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.option-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.9);
+  border-color: #38bdf8;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.96));
+}
+
+/* pill + nút */
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.pill-danger {
+  background: rgba(248, 113, 113, 0.15);
+  border: 1px solid rgba(248, 113, 113, 0.7);
+  color: #fecaca;
+}
+
+.pill-success {
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.7);
+  color: #bbf7d0;
+}
+
+.result-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.result-sub {
+  font-size: 14px;
+  color: #e5e7eb;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.action-row {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.primary-btn,
+.ghost-btn {
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    background 0.12s ease,
+    transform 0.1s ease,
+    box-shadow 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(120deg, #22c55e, #16a34a);
+  color: #f9fafb;
+  box-shadow: 0 12px 24px rgba(22, 163, 74, 0.6);
+  font-weight: 600;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(22, 163, 74, 0.8);
+}
+
+.ghost-btn {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  border-color: rgba(148, 163, 184, 0.7);
+}
+
+.ghost-btn:hover {
+  border-color: #38bdf8;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.98));
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .dialog-layout {
+    flex-direction: column;
+  }
+}
