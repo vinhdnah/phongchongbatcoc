@@ -48,7 +48,7 @@ function openChatQ1() {
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
-    <div class="avatar-circle"></div>
+    <img class="avatar-circle" src="img/avatar-girl.png" alt="Avatar nhân vật nữ" />
     <div class="avatar-name">Nhân vật nữ · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
       Bạn đang ở trong phòng ngủ, vừa xem lại bảng điểm thì TikTok hiện thông báo tin nhắn mới...
@@ -60,7 +60,7 @@ function openChatQ1() {
 
   phone.innerHTML = `
     <div class="phone-header">
-      <div class="phone-header-avatar"></div>
+      <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg">
       <div class="phone-header-info">
         <div class="phone-header-name">CrushBắcSơn</div>
         <div class="phone-header-sub">Hoạt động gần đây</div>
@@ -131,7 +131,7 @@ function openCallScene() {
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
-    <div class="avatar-circle"></div>
+    <img class="avatar-circle" src="img/avatar-girl.png">
     <div class="avatar-name">Nhân vật nữ · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
       Vài phút sau, một số Zalo lạ gọi video đến điện thoại của bạn...
@@ -143,7 +143,7 @@ function openCallScene() {
 
   phone.innerHTML = `
     <div class="phone-header">
-      <div class="phone-header-avatar"></div>
+      <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg">
       <div class="phone-header-info">
         <div class="phone-header-name">Công an mạng (?)</div>
         <div class="phone-header-sub">Đang gọi...</div>
@@ -151,7 +151,7 @@ function openCallScene() {
     </div>
     <div class="call-screen">
       <div class="call-main">
-        <div class="call-avatar"></div>
+        <img class="call-avatar avatar-police" src="img/avatar-police.png">
         <div class="call-name">"Công an mạng"</div>
         <div class="call-sub">Số lạ · Không có trong danh bạ</div>
         <div class="call-timer" id="call-timer" style="display:none;">00:00</div>
