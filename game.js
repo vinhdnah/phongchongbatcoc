@@ -76,49 +76,63 @@ function openChatQ1() {
   const chatBody = phone.querySelector("#chat-body");
   const ting = document.getElementById("ting-audio");
 
-  // 🎵 Hiện tin nhắn đầu tiên
-  chatBody.insertAdjacentHTML(
-    "beforeend",
-    `
-      <div class="bubble them">
-        Anh thấy em ở trước cổng trường chiều nay. Em xinh quá.<br/>
-        Anh biết em đang buồn vì điểm kiểm tra thấp. Anh sẽ giúp em.
-      </div>
-      <div class="bubble-meta">Đã gửi · 1 phút trước</div>
-    `
-  );
-
-  // phát âm thanh ting.mp3
-  if (ting) {
-    ting.currentTime = 0;
-    ting.play().catch(() => {});
+  // helper: tạo bubble "đang soạn..."
+  function createTypingIndicator() {
+    const typing = document.createElement("div");
+    typing.className = "typing-indicator";
+    typing.innerHTML = `<span></span><span></span><span></span>`;
+    return typing;
   }
 
-  // 🕒 Hiệu ứng "đang soạn tin nhắn"
-  const typing = document.createElement("div");
-  typing.className = "typing-indicator";
-  typing.innerHTML = `<span></span><span></span><span></span>`;
-  chatBody.appendChild(typing);
-
-  // sau 2s, hiện tin nhắn 2 + ting.mp3 lần nữa
-  setTimeout(() => {
-    typing.remove();
-    chatBody.insertAdjacentHTML(
-      "beforeend",
-      `
-        <div class="bubble them">
-          Hãy nhắn riêng với anh, đừng kể với ai nhé.
-        </div>
-        <div class="bubble-meta">Đã gửi</div>
-      `
-    );
+  function playTing() {
     if (ting) {
       ting.currentTime = 0;
       ting.play().catch(() => {});
     }
-  }, 2000); // đổi số này để chỉnh thời gian trễ
+  }
 
-  // các lựa chọn
+  // Bước 1: đang soạn tin nhắn 1
+  const typing1 = createTypingIndicator();
+  chatBody.appendChild(typing1);
+
+  // Sau 3.5s -> hiện tin nhắn 1 + ting, rồi lại đang soạn tin 2
+  setTimeout(() => {
+    typing1.remove();
+
+    // Tin nhắn 1
+    chatBody.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div class="bubble them">
+          Anh thấy em ở trước cổng trường chiều nay. Em xinh quá.<br/>
+          Anh biết em đang buồn vì điểm kiểm tra thấp. Anh sẽ giúp em.
+        </div>
+        <div class="bubble-meta">Đã gửi · 1 phút trước</div>
+      `
+    );
+    playTing();
+
+    // Bước 2: đang soạn tin nhắn 2
+    const typing2 = createTypingIndicator();
+    chatBody.appendChild(typing2);
+
+    // Sau 2s -> hiện tin nhắn 2 + ting
+    setTimeout(() => {
+      typing2.remove();
+      chatBody.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="bubble them">
+            Hãy nhắn riêng với anh, đừng kể với ai nhé.
+          </div>
+          <div class="bubble-meta">Đã gửi</div>
+        `
+      );
+      playTing();
+    }, 3500); // thời gian soạn tin nhắn 2 (ms)
+  }, 3500); // thời gian soạn tin nhắn 1 (ms)
+
+  // --- Các lựa chọn ---
   const choices = phone.querySelector("#chat-q1-choices");
   choices.appendChild(
     createChoiceBtn(
@@ -154,6 +168,8 @@ function openChatQ1() {
   layout.appendChild(phone);
   dialogLayer.appendChild(layout);
 }
+
+
 
 
 
