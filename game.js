@@ -72,10 +72,6 @@ function openChatQ1() {
         Anh biết em đang buồn vì điểm kiểm tra thấp. Anh sẽ giúp em.
       </div>
       <div class="bubble-meta">Đã gửi · 1 phút trước</div>
-      <div class="bubble them">
-        Hãy nhắn riêng với anh, đừng kể với ai nhé.
-      </div>
-      <div class="bubble-meta">Đã gửi</div>
     </div>
     <div class="phone-footer">
       Câu hỏi 1: Cờ đỏ ngôn từ bạn nhận ra là gì?
@@ -83,6 +79,30 @@ function openChatQ1() {
     <div class="choice-panel" id="chat-q1-choices"></div>
   `;
 
+  // ----- hiệu ứng "đang soạn tin nhắn" + tin nhắn thứ 2 -----
+  const chatBody = phone.querySelector("#chat-body");
+
+  // tạo bubble 3 chấm
+  const typing = document.createElement("div");
+  typing.className = "typing-indicator";
+  typing.innerHTML = `<span></span><span></span><span></span>`;
+  chatBody.appendChild(typing);
+
+  // sau 2s: bỏ 3 chấm, thêm tin nhắn "Hãy nhắn riêng..."
+  setTimeout(() => {
+    typing.remove();
+    chatBody.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div class="bubble them">
+          Hãy nhắn riêng với anh, đừng kể với ai nhé.
+        </div>
+        <div class="bubble-meta">Đã gửi</div>
+      `
+    );
+  }, 3500);
+
+  // ----- các lựa chọn câu 1 -----
   const choices = phone.querySelector("#chat-q1-choices");
   choices.appendChild(
     createChoiceBtn(
@@ -120,6 +140,7 @@ function openChatQ1() {
 }
 
 
+
 // -------- UI CUỘC GỌI – NGHE AUDIO --------
 
 function openCallScene() {
@@ -129,7 +150,6 @@ function openCallScene() {
   const layout = document.createElement("div");
   layout.className = "dialog-layout";
 
-  // Cột bên trái: avatar nhân vật nữ
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
@@ -140,7 +160,6 @@ function openCallScene() {
     </div>
   `;
 
-  // Cột bên phải: điện thoại đang đổ chuông
   const phone = document.createElement("div");
   phone.className = "phone-shell";
 
@@ -172,20 +191,37 @@ function openCallScene() {
 
   const btnAccept = phone.querySelector("#btn-accept");
   const btnDecline = phone.querySelector("#btn-decline");
+  const ringtone = document.getElementById("ringtone-audio");
 
-  // Từ chối cuộc gọi
+  // 🔊 Bắt đầu phát nhạc chuông khi xuất hiện màn hình gọi
+  if (ringtone) {
+    ringtone.currentTime = 0;
+    ringtone.volume = 0.8;
+    ringtone.play().catch(() => {});
+  }
+
+  // ❌ Từ chối cuộc gọi
   btnDecline.addEventListener("click", () => {
+    if (ringtone) {
+      ringtone.pause();
+      ringtone.currentTime = 0;
+    }
     showGameOver(
       "Bạn cúp máy vì sợ nhưng vẫn giữ mọi chuyện cho riêng mình. Để an toàn, cần báo cho người lớn và cơ quan chức năng, không tự ôm nỗi sợ một mình."
     );
   });
 
-  // Chấp nhận cuộc gọi
+  // ✅ Chấp nhận cuộc gọi
   btnAccept.addEventListener("click", () => {
+    if (ringtone) {
+      ringtone.pause();
+      ringtone.currentTime = 0;
+    }
     startCallAudio(phone);
   });
 }
 
+// ---------- bắt đàu cuộc gọi ----------
 function startCallAudio(phoneShell) {
   const acceptBtn = phoneShell.querySelector("#btn-accept");
   const declineBtn = phoneShell.querySelector("#btn-decline");
@@ -394,6 +430,17 @@ function showGameOver(reasonText) {
   isFinished = true;
   dialogLayer.innerHTML = "";
 
+  // Tắt mọi âm thanh đang phát (chuông + cuộc gọi)
+  const ringtone = document.getElementById("ringtone-audio");
+  if (ringtone) {
+    ringtone.pause();
+    ringtone.currentTime = 0;
+  }
+  if (callAudio) {
+    callAudio.pause();
+    callAudio.currentTime = 0;
+  }
+
   const card = document.createElement("div");
   card.className = "scene-card";
 
@@ -443,12 +490,32 @@ function showGameOver(reasonText) {
   card.appendChild(actions);
 
   dialogLayer.appendChild(card);
+
+  // 🔊 Phát nhạc thua
+  const loseAudio = document.getElementById("lose-audio");
+  if (loseAudio) {
+    loseAudio.currentTime = 0;
+    loseAudio.volume = 0.9;
+    loseAudio.play().catch(() => {});
+  }
 }
+
 
 function showWin() {
   scene = "win";
   isFinished = true;
   dialogLayer.innerHTML = "";
+
+  // Tắt mọi âm thanh đang phát (chuông + cuộc gọi)
+  const ringtone = document.getElementById("ringtone-audio");
+  if (ringtone) {
+    ringtone.pause();
+    ringtone.currentTime = 0;
+  }
+  if (callAudio) {
+    callAudio.pause();
+    callAudio.currentTime = 0;
+  }
 
   const card = document.createElement("div");
   card.className = "scene-card";
@@ -497,7 +564,16 @@ function showWin() {
   card.appendChild(actions);
 
   dialogLayer.appendChild(card);
+
+  // 🔊 Phát nhạc thắng
+  const winAudio = document.getElementById("win-audio");
+  if (winAudio) {
+    winAudio.currentTime = 0;
+    winAudio.volume = 0.9;
+    winAudio.play().catch(() => {});
+  }
 }
+
 
 // -------- RESET GAME --------
 
