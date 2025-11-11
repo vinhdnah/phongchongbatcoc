@@ -48,7 +48,7 @@ function openChatQ1() {
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
-    <img class="avatar-circle" src="img/avatar-girl.png" alt="Avatar nhân vật nữ" />
+    <img class="avatar-circle" src="img/avatar-girl.png" alt="Nhân vật nữ" />
     <div class="avatar-name">Nhân vật nữ · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
       Bạn đang ở trong phòng ngủ, vừa xem lại bảng điểm thì TikTok hiện thông báo tin nhắn mới...
@@ -60,11 +60,11 @@ function openChatQ1() {
 
   phone.innerHTML = `
     <div class="phone-header">
-        <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg" alt="Crush Bắc Sơn">
-        <div class="phone-header-info">
-            <div class="phone-header-name">Crush Bắc Sơn</div>
-            <div class="phone-header-sub">Hoạt động gần đây</div>
-        </div>
+      <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg" alt="Crush Bắc Sơn" />
+      <div class="phone-header-info">
+        <div class="phone-header-name">Crush Bắc Sơn</div>
+        <div class="phone-header-sub">Hoạt động gần đây</div>
+      </div>
     </div>
     <div class="phone-body" id="chat-body">
       <div class="bubble them">
@@ -119,6 +119,7 @@ function openChatQ1() {
   dialogLayer.appendChild(layout);
 }
 
+
 // -------- UI CUỘC GỌI – NGHE AUDIO --------
 
 function openCallScene() {
@@ -131,7 +132,7 @@ function openCallScene() {
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
-    <img class="avatar-circle" src="img/avatar-girl.png">
+    <img class="avatar-circle" src="img/avatar-girl.png" alt="Nhân vật nữ" />
     <div class="avatar-name">Nhân vật nữ · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
       Vài phút sau, một số Zalo lạ gọi video đến điện thoại của bạn...
@@ -143,7 +144,7 @@ function openCallScene() {
 
   phone.innerHTML = `
     <div class="phone-header">
-      <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg">
+      <img class="phone-header-avatar avatar-police" src="img/avatar-police.png" alt="Công an mạng" />
       <div class="phone-header-info">
         <div class="phone-header-name">Công an mạng (?)</div>
         <div class="phone-header-sub">Đang gọi...</div>
@@ -154,7 +155,8 @@ function openCallScene() {
         <img class="call-avatar avatar-police" src="img/avatar-police.png" alt="Công an mạng" />
         <div class="call-name">"Công an mạng"</div>
         <div class="call-sub">Số lạ · Không có trong danh bạ</div>
-    </div>
+        <div class="call-timer" id="call-timer" style="display:none;">00:00</div>
+      </div>
       <div class="call-actions">
         <button class="call-btn decline" id="btn-decline">✕</button>
         <button class="call-btn accept" id="btn-accept">✓</button>
@@ -178,73 +180,6 @@ function openCallScene() {
   btnAccept.addEventListener("click", () => {
     startCallAudio(phone);
   });
-}
-
-
-function startCallAudio(phoneShell) {
-  const acceptBtn = phoneShell.querySelector("#btn-accept");
-  const declineBtn = phoneShell.querySelector("#btn-decline");
-  const headerSub = phoneShell.querySelector(".phone-header-sub");
-  const timerEl = phoneShell.querySelector("#call-timer");
-
-  let seconds = 0;
-
-  // Hiện timer + trạng thái đang gọi
-  if (timerEl) {
-    timerEl.style.display = "block";
-    timerEl.textContent = "00:00";
-  }
-  headerSub.textContent = "Đang trong cuộc gọi...";
-
-  // Ẩn nút từ chối ban đầu
-  if (declineBtn) {
-    declineBtn.style.display = "none";
-  }
-
-  // Đổi nút chấp nhận thành nút tắt máy
-  if (acceptBtn) {
-    acceptBtn.classList.remove("accept");
-    acceptBtn.classList.add("decline");
-    acceptBtn.textContent = "✕";
-  }
-
-  // Đếm thời gian cuộc gọi
-  const timerId = setInterval(() => {
-    seconds++;
-    if (timerEl) {
-      const m = String(Math.floor(seconds / 60)).padStart(2, "0");
-      const s = String(seconds % 60).padStart(2, "0");
-      timerEl.textContent = `${m}:${s}`;
-    }
-  }, 1000);
-
-  function endCallAndGoNext() {
-    clearInterval(timerId);
-    if (callAudio) {
-      callAudio.pause();
-      callAudio.currentTime = 0;
-    }
-    openCallQuestion(); // sang câu hỏi 2
-  }
-
-  // Bấm nút ✕ thì kết thúc cuộc gọi và sang câu hỏi
-  if (acceptBtn) {
-    acceptBtn.onclick = endCallAndGoNext; // ghi đè handler cũ
-  }
-
-  // Phát audio (nếu có file)
-  if (callAudio) {
-    callAudio.currentTime = 0;
-    callAudio.play().catch(() => {
-      // nếu bị chặn autoplay thì vẫn giữ giao diện,
-      // người chơi có thể tự bấm ✕ để sang câu hỏi
-    });
-
-    // ✅ Khi nghe hết file call.mp3 thì tự động kết thúc và hiện lựa chọn
-    callAudio.onended = () => {
-      endCallAndGoNext();
-    };
-  }
 }
 
 
