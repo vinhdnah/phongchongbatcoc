@@ -60,7 +60,7 @@ function openChatQ1() {
 
   phone.innerHTML = `
     <div class="phone-header">
-        <img class="phone-header-avatar" src="img/avatar-crush.jpg" alt="Crush Bắc Sơn" />
+        <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg" alt="Crush Bắc Sơn">
         <div class="phone-header-info">
             <div class="phone-header-name">Crush Bắc Sơn</div>
             <div class="phone-header-sub">Hoạt động gần đây</div>
@@ -151,7 +151,7 @@ function openCallScene() {
     </div>
     <div class="call-screen">
       <div class="call-main">
-        <img class="call-avatar" src="img/avatar-police.png" alt="Công an mạng" />
+        <img class="call-avatar avatar-police" src="img/avatar-police.png" alt="Công an mạng" />
         <div class="call-name">"Công an mạng"</div>
         <div class="call-sub">Số lạ · Không có trong danh bạ</div>
     </div>
