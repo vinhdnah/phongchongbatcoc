@@ -129,6 +129,7 @@ function openCallScene() {
   const layout = document.createElement("div");
   layout.className = "dialog-layout";
 
+  // Cột bên trái: avatar nhân vật nữ
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
@@ -139,6 +140,7 @@ function openCallScene() {
     </div>
   `;
 
+  // Cột bên phải: điện thoại đang đổ chuông
   const phone = document.createElement("div");
   phone.className = "phone-shell";
 
@@ -171,15 +173,85 @@ function openCallScene() {
   const btnAccept = phone.querySelector("#btn-accept");
   const btnDecline = phone.querySelector("#btn-decline");
 
+  // Từ chối cuộc gọi
   btnDecline.addEventListener("click", () => {
     showGameOver(
       "Bạn cúp máy vì sợ nhưng vẫn giữ mọi chuyện cho riêng mình. Để an toàn, cần báo cho người lớn và cơ quan chức năng, không tự ôm nỗi sợ một mình."
     );
   });
 
+  // Chấp nhận cuộc gọi
   btnAccept.addEventListener("click", () => {
     startCallAudio(phone);
   });
+}
+
+function startCallAudio(phoneShell) {
+  const acceptBtn = phoneShell.querySelector("#btn-accept");
+  const declineBtn = phoneShell.querySelector("#btn-decline");
+  const headerSub = phoneShell.querySelector(".phone-header-sub");
+  const timerEl = phoneShell.querySelector("#call-timer");
+
+  let seconds = 0;
+
+  // Hiện timer + trạng thái đang gọi
+  if (timerEl) {
+    timerEl.style.display = "block";
+    timerEl.textContent = "00:00";
+  }
+  if (headerSub) {
+    headerSub.textContent = "Đang trong cuộc gọi...";
+  }
+
+  // Ẩn nút từ chối ban đầu
+  if (declineBtn) {
+    declineBtn.style.display = "none";
+  }
+
+  // Đổi nút chấp nhận thành nút tắt máy (đỏ ✕)
+  if (acceptBtn) {
+    acceptBtn.disabled = false;     // đảm bảo không bị disable
+    acceptBtn.classList.remove("accept");
+    acceptBtn.classList.add("decline");
+    acceptBtn.textContent = "✕";
+  }
+
+  // Đếm thời gian cuộc gọi
+  const timerId = setInterval(() => {
+    seconds++;
+    if (timerEl) {
+      const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const s = String(seconds % 60).padStart(2, "0");
+      timerEl.textContent = `${m}:${s}`;
+    }
+  }, 1000);
+
+  function endCallAndGoNext() {
+    clearInterval(timerId);
+    if (callAudio) {
+      callAudio.pause();
+      callAudio.currentTime = 0;
+    }
+    openCallQuestion(); // sang Câu hỏi 2
+  }
+
+  // Bấm nút ✕ (sau khi nhận) để kết thúc cuộc gọi
+  if (acceptBtn) {
+    acceptBtn.onclick = endCallAndGoNext; // ghi đè handler cũ
+  }
+
+  // Phát audio (nếu có)
+  if (callAudio) {
+    callAudio.currentTime = 0;
+    callAudio.play().catch(() => {
+      // nếu bị chặn autoplay: vẫn để người chơi tự bấm ✕
+    });
+
+    // Khi audio phát xong thì tự sang câu hỏi
+    callAudio.onended = () => {
+      endCallAndGoNext();
+    };
+  }
 }
 
 
