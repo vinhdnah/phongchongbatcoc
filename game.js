@@ -2,6 +2,7 @@ const roomScene = document.getElementById("room-scene");
 const roomGirl = document.getElementById("room-girl");
 const roomPhone = document.getElementById("room-phone");
 const roomNoti = document.getElementById("room-noti");
+const tingAudio = document.getElementById("ting-audio");
 
 const dialogLayer = document.getElementById("dialog-layer");
 const callAudio = document.getElementById("call-audio");
@@ -18,10 +19,112 @@ function startRoomIntro() {
 
   setTimeout(() => {
     roomNoti.classList.add("hidden");
-    openChatQ1();
+    openInboxScene(); // 👉 vào màn danh sách chat, KHÔNG mở chatQ1 ngay
   }, 1500);
 }
 
+function openInboxScene() {
+  scene = "inbox";
+  isFinished = false;
+  dialogLayer.classList.remove("hidden");
+  dialogLayer.innerHTML = "";
+
+  const phone = document.createElement("div");
+  phone.className = "phone-shell";
+
+  phone.innerHTML = `
+    <div class="phone-header">
+      <div class="phone-header-avatar"></div>
+      <div class="phone-header-info">
+        <div class="phone-header-name">
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/021/495/949/non_2x/messenger-logo-icon-free-png.png"
+            class="messenger-logo"
+            alt="Messenger logo"
+          />
+          Messenger
+        </div>
+
+        <div class="phone-header-sub">Bạn bè · Trường Bắc Sơn</div>
+      </div>
+    </div>
+    <div class="inbox-list" id="inbox-list"></div>
+  `;
+
+  dialogLayer.appendChild(phone);
+
+  const inbox = phone.querySelector("#inbox-list");
+
+  // helper tạo 1 dòng chat
+  function createInboxItem(label, preview, time, opts = {}) {
+    const item = document.createElement("div");
+    item.className = "inbox-item" + (opts.isCrush ? " inbox-item-crush" : "");
+    item.dataset.id = opts.id || "";
+
+    item.innerHTML = `
+      <div class="inbox-avatar${opts.isCrush ? " avatar-crush" : ""}">
+        ${opts.isCrush ? "C" : label.charAt(0)}
+      </div>
+      <div class="inbox-main">
+        <div class="inbox-name">${label}</div>
+        <div class="inbox-preview">${preview}</div>
+      </div>
+      <div class="inbox-time">${time}</div>
+    `;
+
+    if (opts.onClick) {
+      item.addEventListener("click", opts.onClick);
+    }
+
+    return item;
+  }
+
+  // Tạo 8 bạn đầu tiên
+  const friends = [
+    { name: "Bạn 1", preview: "Mai đi học nhóm nha?", time: "19:20" },
+    { name: "Bạn 2", preview: "Nộp bài văn chưa đó?", time: "19:05" },
+    { name: "Bạn 3", preview: "Tối on game không?", time: "18:50" },
+    { name: "Bạn 4", preview: "Nhớ mang áo đồng phục nhé.", time: "18:32" },
+    { name: "Bạn 5", preview: "Mượn vở Toán mai trả.", time: "18:10" },
+    { name: "Bạn 6", preview: "Thầy có kiểm tra miệng đó.", time: "17:45" },
+    { name: "Bạn 7", preview: "Ê, mai đi ăn chè ~", time: "17:22" },
+    { name: "Bạn 8", preview: "Thầy trả bài chưa?", time: "17:05" }
+  ];
+
+  friends.forEach((f, idx) => {
+    inbox.appendChild(
+      createInboxItem(f.name, f.preview, f.time, { id: "friend" + (idx + 1) })
+    );
+  });
+
+  // Sau 0.8s, "Crush Bắc Sơn" nhảy lên đầu list
+  setTimeout(() => {
+    const crushItem = createInboxItem(
+      "Crush Bắc Sơn",
+      "Anh có điều này muốn nói...",
+      "Vừa xong",
+      {
+        id: "crush",
+        isCrush: true,
+        onClick: () => {
+          // khi click vào, mở Câu 1
+          openChatQ1();
+        }
+      }
+    );
+    // đưa lên trên cùng
+    inbox.prepend(crushItem);
+  }, 2000);
+}
+
+
+function playTing() {
+  if (!tingAudio) return;
+  tingAudio.currentTime = 0;
+  tingAudio.play().catch((err) => {
+    console.log("Không phát được ting (trình duyệt chặn autoplay):", err);
+  });
+}
 // -------- TẠO NÚT LỰA CHỌN --------
 
 function createChoiceBtn(key, text, handler) {
@@ -634,4 +737,6 @@ function resetGame() {
 
 // -------- KHỞI CHẠY --------
 
-resetGame();
+window.addEventListener("load", () => {
+  resetGame();
+});
