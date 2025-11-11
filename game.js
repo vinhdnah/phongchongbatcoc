@@ -66,29 +66,41 @@ function openChatQ1() {
         <div class="phone-header-sub">Hoạt động gần đây</div>
       </div>
     </div>
-    <div class="phone-body" id="chat-body">
-      <div class="bubble them">
-        Anh thấy em ở trước cổng trường chiều nay. Em xinh quá.<br/>
-        Anh biết em đang buồn vì điểm kiểm tra thấp. Anh sẽ giúp em.
-      </div>
-      <div class="bubble-meta">Đã gửi · 1 phút trước</div>
-    </div>
+    <div class="phone-body" id="chat-body"></div>
     <div class="phone-footer">
       Câu hỏi 1: Cờ đỏ ngôn từ bạn nhận ra là gì?
     </div>
     <div class="choice-panel" id="chat-q1-choices"></div>
   `;
 
-  // ----- hiệu ứng "đang soạn tin nhắn" + tin nhắn thứ 2 -----
   const chatBody = phone.querySelector("#chat-body");
+  const ting = document.getElementById("ting-audio");
 
-  // tạo bubble 3 chấm
+  // 🎵 Hiện tin nhắn đầu tiên
+  chatBody.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div class="bubble them">
+        Anh thấy em ở trước cổng trường chiều nay. Em xinh quá.<br/>
+        Anh biết em đang buồn vì điểm kiểm tra thấp. Anh sẽ giúp em.
+      </div>
+      <div class="bubble-meta">Đã gửi · 1 phút trước</div>
+    `
+  );
+
+  // phát âm thanh ting.mp3
+  if (ting) {
+    ting.currentTime = 0;
+    ting.play().catch(() => {});
+  }
+
+  // 🕒 Hiệu ứng "đang soạn tin nhắn"
   const typing = document.createElement("div");
   typing.className = "typing-indicator";
   typing.innerHTML = `<span></span><span></span><span></span>`;
   chatBody.appendChild(typing);
 
-  // sau 2s: bỏ 3 chấm, thêm tin nhắn "Hãy nhắn riêng..."
+  // sau 2s, hiện tin nhắn 2 + ting.mp3 lần nữa
   setTimeout(() => {
     typing.remove();
     chatBody.insertAdjacentHTML(
@@ -100,9 +112,13 @@ function openChatQ1() {
         <div class="bubble-meta">Đã gửi</div>
       `
     );
-  }, 3500);
+    if (ting) {
+      ting.currentTime = 0;
+      ting.play().catch(() => {});
+    }
+  }, 2000); // đổi số này để chỉnh thời gian trễ
 
-  // ----- các lựa chọn câu 1 -----
+  // các lựa chọn
   const choices = phone.querySelector("#chat-q1-choices");
   choices.appendChild(
     createChoiceBtn(
@@ -138,6 +154,7 @@ function openChatQ1() {
   layout.appendChild(phone);
   dialogLayer.appendChild(layout);
 }
+
 
 
 
