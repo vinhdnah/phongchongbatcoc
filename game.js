@@ -1000,35 +1000,40 @@ window.addEventListener("load", () => {
   const greet  = document.getElementById("greet-modal");
   const btnOK  = document.getElementById("btn-greet-ok");
 
-  // 1) Hiện MENU và POPUP ngay khi vào
+  // 1️⃣ Hiện menu và popup "Xin chào"
   if (menu)  menu.style.display  = "flex";
   if (greet) greet.style.display = "flex";
 
-  // 2) Bấm OK -> phát nhạc nền chờ & đóng popup
+  // 2️⃣ Bấm OK -> phát nhạc chờ
   if (btnOK) {
     btnOK.addEventListener("click", () => {
       if (bg) {
         try {
           bg.volume = 0.5;
           bg.currentTime = 0;
-          bg.play();  // được phép vì có tương tác người dùng
+          bg.play();
         } catch (_) {}
       }
       if (greet) greet.style.display = "none";
     });
   }
 
-  // 3) Bấm Start -> tắt nhạc chờ (hoặc giữ tùy ý), ẩn menu, bắt đầu game
+  // 3️⃣ Bấm Start -> DỪNG nhạc chờ + vào game
   if (btn) {
     btn.addEventListener("click", () => {
-      // Nếu muốn tắt nhạc chờ khi bắt đầu game, bỏ comment 3 dòng dưới:
-      // if (bg) {
-      //   try { bg.pause(); bg.currentTime = 0; } catch (_) {}
-      // }
+      // dừng nhạc chờ ngay
+      if (bg) {
+        try {
+          bg.pause();
+          bg.currentTime = 0;
+        } catch (_) {}
+      }
+      // ẩn menu
       if (menu) menu.style.display = "none";
-      setTimeout(() => {
-        if (typeof resetGame === "function") resetGame();
-      }, 0);
+      // gọi hàm resetGame() để khởi động game
+      if (typeof resetGame === "function") {
+        setTimeout(() => resetGame(), 0);
+      }
     });
   }
 });
