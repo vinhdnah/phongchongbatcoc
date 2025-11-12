@@ -11,6 +11,50 @@ const callAudio = document.getElementById("call-audio");
 let scene = "room"; // room -> chat_q1 -> call -> call_question -> q3 -> win/gameover
 let isFinished = false;
 
+// ===== MENU & NHẠC CHỜ =====
+const menuLayer = document.getElementById("menu-layer");
+const bgAudio   = document.getElementById("bg-audio");
+
+function playMenuMusic() {
+  if (!bgAudio) return;
+  try {
+    bgAudio.volume = 0.5;
+    bgAudio.currentTime = 0;
+    bgAudio.play();
+  } catch (_) {}
+}
+
+function fadeOutMenuMusic(cb) {
+  if (!bgAudio) { cb && cb(); return; }
+  let v = bgAudio.volume;
+  const id = setInterval(() => {
+    v = Math.max(0, v - 0.05);
+    bgAudio.volume = v;
+    if (v <= 0) {
+      clearInterval(id);
+      try { bgAudio.pause(); } catch (_) {}
+      cb && cb();
+    }
+  }, 50);
+}
+
+function showStartMenu() {
+  if (menuLayer) menuLayer.style.display = "flex";
+  playMenuMusic();
+  const btn = document.getElementById("btn-start");
+  if (btn) {
+    btn.onclick = () => {
+      // tắt nhạc chờ, rồi bắt đầu game
+      fadeOutMenuMusic(() => {
+        if (menuLayer) menuLayer.style.display = "none";
+        // BẮT ĐẦU GAME: gọi resetGame() để chạy lại intro phòng ngủ như flow hiện có
+        if (typeof resetGame === "function") resetGame();
+        else if (typeof startRoomIntro === "function") startRoomIntro();
+      });
+    };
+  }
+}
+
 // -------- KHỞI ĐỘNG: PHÒNG NGỦ, ĐIỆN THOẠI RUNG --------
 
 function startRoomIntro() {
@@ -948,6 +992,43 @@ function resetGame() {
   if (isMobile) document.documentElement.classList.add("is-mobile");
 })();
 
+// ===== START MENU + GREETING POPUP =====
 window.addEventListener("load", () => {
-  resetGame();
+  const menu   = document.getElementById("menu-layer");
+  const btn    = document.getElementById("btn-start");
+  const bg     = document.getElementById("bg-audio");   // nhạc nền chờ (loop)
+  const greet  = document.getElementById("greet-modal");
+  const btnOK  = document.getElementById("btn-greet-ok");
+
+  // 1) Hiện MENU và POPUP ngay khi vào
+  if (menu)  menu.style.display  = "flex";
+  if (greet) greet.style.display = "flex";
+
+  // 2) Bấm OK -> phát nhạc nền chờ & đóng popup
+  if (btnOK) {
+    btnOK.addEventListener("click", () => {
+      if (bg) {
+        try {
+          bg.volume = 0.5;
+          bg.currentTime = 0;
+          bg.play();  // được phép vì có tương tác người dùng
+        } catch (_) {}
+      }
+      if (greet) greet.style.display = "none";
+    });
+  }
+
+  // 3) Bấm Start -> tắt nhạc chờ (hoặc giữ tùy ý), ẩn menu, bắt đầu game
+  if (btn) {
+    btn.addEventListener("click", () => {
+      // Nếu muốn tắt nhạc chờ khi bắt đầu game, bỏ comment 3 dòng dưới:
+      // if (bg) {
+      //   try { bg.pause(); bg.currentTime = 0; } catch (_) {}
+      // }
+      if (menu) menu.style.display = "none";
+      setTimeout(() => {
+        if (typeof resetGame === "function") resetGame();
+      }, 0);
+    });
+  }
 });
