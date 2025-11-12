@@ -178,6 +178,7 @@ function openChatQ1() {
 
   let isChatQ1Active = true;      // còn ở ChatQ1?
   let q1AnsweredCorrect = false;  // đã chọn đúng (B hoặc C) chưa
+  const timeouts = [];            // gom timeout để clear khi thoát
 
   const layout = document.createElement("div");
   layout.className = "dialog-layout";
@@ -216,9 +217,11 @@ function openChatQ1() {
   const choices  = phone.querySelector("#chat-q1-choices");
   const ting     = document.getElementById("ting-audio");
 
-  // Nút quay lại Inbox: chỉ khi đã trả lời đúng mới nối tiếp sang cuộc gọi (sau 3s)
+  // quay lại Inbox
   backBtn.addEventListener("click", () => {
     isChatQ1Active = false;
+    // clear mọi timeout còn chạy
+    while (timeouts.length) clearTimeout(timeouts.pop());
     openInboxScene();
     if (q1AnsweredCorrect) setTimeout(() => openCallScene(), 3000);
   });
@@ -240,16 +243,17 @@ function openChatQ1() {
     typing.innerHTML = `<span></span><span></span><span></span>`;
     return typing;
   }
-  function playTing() {
+  function playTingSafe() {
     if (!isChatQ1Active) return;
-    if (ting) { ting.currentTime = 0; ting.play().catch(()=>{}); }
+    if (ting) { try { ting.currentTime = 0; ting.play(); } catch(_){} }
   }
 
-  // — Tin nhắn 1 + 2: giọng nữ ngọt ngào, đánh vào điểm yếu tâm lý của nam sinh —
+  // === Tin nhắn diễn tiến ===
+  // Giai đoạn 1: typing → Msg1
   const typing1 = createTypingIndicator();
   chatBody.appendChild(typing1);
 
-  setTimeout(() => {
+  timeouts.push(setTimeout(() => {
     if (!isChatQ1Active) return;
     typing1.remove();
 
@@ -260,12 +264,13 @@ function openChatQ1() {
       </div>
       <div class="bubble-meta">Đã gửi · 1 phút trước</div>
     `);
-    playTing();
+    playTingSafe();
 
-    // Msg 2
+    // Giai đoạn 2: typing → Msg2
     const typing2 = createTypingIndicator();
     chatBody.appendChild(typing2);
-    setTimeout(() => {
+
+    timeouts.push(setTimeout(() => {
       if (!isChatQ1Active) return;
       typing2.remove();
 
@@ -276,67 +281,79 @@ function openChatQ1() {
         </div>
         <div class="bubble-meta">Đã gửi</div>
       `);
-      playTing();
-    }, 2000);
-  }, 3500);
+      playTingSafe();
 
-  // — Lựa chọn —
-  // A = SAi → game over
-  choices.appendChild(
-    createChoiceBtn(
-      "A",
-      "Nghĩ đây là người hâm mộ dễ thương → kể chuyện riêng tư.",
-      () => {
-        showGameOver(
-          "Bạn bị lời khen & thân mật quá mức làm mờ cảnh giác. Đây là bước khởi đầu để thao túng/lừa đảo."
-        );
-      }
-    )
-  );
+      // ⬇️ CHỈ BÂY GIỜ mới render các lựa chọn
+      renderChoices();
 
-  // B = ĐÚNG: Chặn → THẮNG bằng THẺ THÔNG BÁO (không phải bong bóng chat)
-  choices.appendChild(
-    createChoiceBtn(
-      "B",
-      "Nhận ra người lạ và chặn luôn",
-      () => {
-        q1AnsweredCorrect = true;
-        window.chatQ1Blocked = true;
+    }, 2000)); // thời gian "đang gõ" lần 2
+  }, 3500));   // thời gian "đang gõ" lần 1
 
-        chatBody.innerHTML = `
-          <div class="system-notice success">
-            <div class="notice-icon">🏆</div>
-            <div class="notice-title">Chúc mừng bạn đã thoát hiểm!</div>
-            <div class="notice-sub">
-              Bạn đã tránh được nguy cơ bị kẻ xấu lạm dụng, thao túng tâm lý
-              và về lâu dài có thể bị bắt cóc online.
+  // Hiển thị lựa chọn sau khi tin nhắn xong
+  function renderChoices() {
+    // xóa để chắc chắn không nhân đôi
+    choices.innerHTML = "";
+
+    // A = Sai → Game Over
+    choices.appendChild(
+      createChoiceBtn(
+        "A",
+        "Nghĩ đây là người hâm mộ dễ thương → kể chuyện riêng tư.",
+        () => {
+          showGameOver(
+            "Bạn bị lời khen & thân mật quá mức làm mờ cảnh giác. Đây là bước khởi đầu để thao túng/lừa đảo."
+          );
+        }
+      )
+    );
+
+    // B = Đúng: Chặn → hiện thẻ thông báo THẮNG trong khung chat (không phải bong bóng)
+    choices.appendChild(
+      createChoiceBtn(
+        "B",
+        "Nhận ra người lạ và chặn luôn",
+        () => {
+          q1AnsweredCorrect = true;
+          window.chatQ1Blocked = true;
+
+          chatBody.innerHTML = `
+            <div class="system-notice success">
+              <div class="notice-icon">🏆</div>
+              <div class="notice-title">Chúc mừng bạn đã thoát hiểm!</div>
+              <div class="notice-sub">
+                Bạn đã tránh được nguy cơ bị kẻ xấu lạm dụng, thao túng tâm lý
+                và về lâu dài có thể bị bắt cóc online.
+              </div>
+              <div class="notice-hint">Nhấn “←” để quay lại hộp thoại.</div>
             </div>
-            <div class="notice-hint">Nhấn “←” để quay lại hộp thoại.</div>
-          </div>
-        `;
-        // Không auto thoát: người chơi chủ động bấm “←”; 3s sau ở Inbox sẽ có cuộc gọi.
-      }
-    )
-  );
+          `;
+          // Người chơi chủ động bấm “←”; 3s sau ở Inbox sẽ có cuộc gọi.
+        }
+      )
+    );
 
-  // C = ĐÚNG: Không trả lời, hỏi người lớn → quay ra Inbox ngay, rồi 3s sau có cuộc gọi
-  choices.appendChild(
-    createChoiceBtn(
-      "C",
-      "Thấy sợ, không trả lời và quyết định hỏi ý kiến bố mẹ/thầy cô.",
-      () => {
-        q1AnsweredCorrect = true;
-        isChatQ1Active = false;
-        openInboxScene();
-        setTimeout(() => openCallScene(), 3000);
-      }
-    )
-  );
+    // C = Đúng: Không trả lời, đi hỏi người lớn → quay ra Inbox ngay; 3s sau có cuộc gọi
+    choices.appendChild(
+      createChoiceBtn(
+        "C",
+        "Thấy sợ, không trả lời và quyết định hỏi ý kiến bố mẹ/thầy cô.",
+        () => {
+          q1AnsweredCorrect = true;
+          isChatQ1Active = false;
+          // clear timeout đề phòng
+          while (timeouts.length) clearTimeout(timeouts.pop());
+          openInboxScene();
+          setTimeout(() => openCallScene(), 3000);
+        }
+      )
+    );
+  }
 
   layout.appendChild(avatarCol);
   layout.appendChild(phone);
   dialogLayer.appendChild(layout);
 }
+
 
 
 
