@@ -911,6 +911,22 @@ function resetGame() {
 
 
 // -------- KHỞI CHẠY --------
+// ===== Mobile 100vh fix + flag is-mobile =====
+(function () {
+  function setVH() {
+    // 1vh = 1% chiều cao viewport thực tế (trừ thanh URL)
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }
+  setVH();
+  window.addEventListener("resize", setVH);
+
+  // Gắn class để CSS biết đang ở mobile
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    window.innerWidth <= 600;
+  if (isMobile) document.documentElement.classList.add("is-mobile");
+})();
 
 window.addEventListener("load", () => {
   resetGame();

@@ -947,3 +947,115 @@ body {
 @keyframes fadeOutCenter {
   to { opacity: 0; transform: translate(-50%, -50%) scale(0.98); }
 }
+
+/* ===== MOBILE UI (≤ 600px) ===== */
+@media (max-width: 600px) {
+  body {
+    background: #020617;
+  }
+
+  #game-root {
+    /* full màn hình theo --vh để không bị “lọt” do thanh URL */
+    width: 100vw;
+    height: calc(var(--vh) * 100);
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: #020617;
+  }
+
+  /* Phòng ngủ chiếm ít chỗ hơn; bo gọn cho mobile */
+  #room-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border-width: 0;
+    box-shadow: none;
+  }
+  .room-caption {
+    font-size: 12px;
+    left: 12px; right: 12px; bottom: 8px;
+  }
+  #room-noti {
+    bottom: 24px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* Lớp dialog xếp dọc, sát mép an toàn */
+  #dialog-layer {
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right));
+    backdrop-filter: blur(8px);
+  }
+  .dialog-layout {
+    flex-direction: column;    /* avatar trên, điện thoại dưới */
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  /* Avatar nhỏ gọn hơn */
+  .dialog-avatar .avatar-circle { width: 84px; height: 84px; }
+  .dialog-avatar .avatar-name { font-size: 14px; }
+
+  /* Khung điện thoại full-chiều cao hợp lý */
+  .phone-shell {
+    max-width: 430px;
+    width: 100%;
+    height: calc(var(--vh) * 100 - 160px); /* chừa vùng avatar + padding */
+    min-height: 520px;                      /* đừng thấp quá */
+    border-radius: 18px;
+    padding: 6px 8px 10px;
+  }
+
+  /* Header gọn */
+  .phone-header { margin-top: 10px; padding: 6px 8px 8px; }
+  .phone-header-name { font-size: 13px; }
+  .phone-header-sub { font-size: 10.5px; }
+
+  /* Vùng chat/inbox cao hơn, cuộn mượt */
+  .phone-body { height: auto; max-height: none; flex: 1; }
+  .inbox-list { height: auto; max-height: none; flex: 1; }
+
+  /* Nút bấm thân thiện ngón tay (≥ 44px) */
+  .choice-btn, .option-btn {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  .choice-btn span.key, .option-btn span.key {
+    width: 24px; height: 24px; font-size: 12px;
+  }
+
+  .call-actions { gap: 20px; margin-bottom: 10px; }
+  .call-btn { width: 64px; height: 64px; font-size: 22px; }
+
+  .bubble { max-width: 78vw; }  /* bong bóng đỡ tràn */
+  .bubble-meta { font-size: 10.5px; }
+
+  /* Thông báo giữa màn hình (popup thắng) */
+  .center-notice {
+    width: 88vw;
+    max-width: 520px;
+    padding: 14px 16px;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+  }
+
+  /* Card scene (nếu còn dùng chỗ nào) */
+  .scene-card { border-radius: 14px; padding: 14px; }
+  .scene-title { font-size: 20px; }
+  .scene-description { font-size: 13px; }
+
+  /* Safe area cho nút dưới cùng */
+  .action-row { gap: 8px; }
+  .primary-btn, .ghost-btn { padding: 10px 14px; font-size: 14px; }
+
+  /* Ẩn bớt bóng/viền để đỡ nặng mobile */
+  .phone-shell, .scene-card { box-shadow: 0 10px 24px rgba(15,23,42,.7); }
+}
+
+/* Cực nhỏ (≤ 360px) tinh chỉnh thêm */
+@media (max-width: 360px) {
+  .phone-shell { min-height: 480px; }
+  .bubble { max-width: 82vw; }
+  .dialog-avatar .avatar-circle { width: 72px; height: 72px; }
+}
