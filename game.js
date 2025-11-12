@@ -25,7 +25,6 @@ function startRoomIntro() {
 }
 
 function openInboxScene() {
-  // cờ toàn cục
   window.chatQ1Blocked = window.chatQ1Blocked ?? false;
   window.inboxInitializedOnce = window.inboxInitializedOnce ?? false;
   window.q3ThreadUnlocked = window.q3ThreadUnlocked ?? false;
@@ -59,7 +58,6 @@ function openInboxScene() {
   dialogLayer.appendChild(phone);
   const inbox = phone.querySelector("#inbox-list");
 
-  // helper
   function createInboxItem(label, preview, time, opts = {}) {
     const item = document.createElement("div");
     let extraClass = "";
@@ -82,21 +80,6 @@ function openInboxScene() {
     if (typeof opts.onClick === "function") item.addEventListener("click", opts.onClick);
     return item;
   }
-
-  // danh sách bạn bè mẫu
-  const friends = [
-    { name: "Bạn 1", preview: "Mai đi học nhóm nha?", time: "19:20" },
-    { name: "Bạn 2", preview: "Nộp bài văn chưa đó?", time: "19:05" },
-    { name: "Bạn 3", preview: "Tối on game không?", time: "18:50" },
-    { name: "Bạn 4", preview: "Nhớ mang áo đồng phục nhé.", time: "18:32" },
-    { name: "Bạn 5", preview: "Mượn vở Toán mai trả.", time: "18:10" },
-    { name: "Bạn 6", preview: "Thầy có kiểm tra miệng đó.", time: "17:45" },
-    { name: "Bạn 7", preview: "Ê, mai đi ăn chè ~", time: "17:22" },
-    { name: "Bạn 8", preview: "Thầy trả bài chưa?", time: "17:05" }
-  ];
-  friends.forEach((f, i) =>
-    inbox.appendChild(createInboxItem(f.name, f.preview, f.time, { id: "friend"+(i+1) }))
-  );
 
   // ---- CRUSH ----
   const CRUSH_NAME = "Nguyễn Hồng Linh";
@@ -135,13 +118,10 @@ function openInboxScene() {
       );
       anonItem.addEventListener("click", () => openAnonChatQ3());
       inbox.prepend(anonItem);
-      // ting khi tin nhắn tới
       try { playTing && playTing(); } catch (_) {}
-      // sau khi chèn xong, reset cờ nguồn gốc
       window.fromDeclineFlow = false;
     };
 
-    // Nếu vừa quay về từ nút từ chối cuộc gọi -> delay 800ms để "đến như tin mới"
     const anonDelay = window.fromDeclineFlow ? 800 : 0;
     setTimeout(addAnon, anonDelay);
   }
@@ -897,11 +877,11 @@ function resetGame() {
   scene = "room";
   isFinished = false;
 
-  // 🔁 Reset cờ chặn Q1 về mặc định (chưa chặn)
-  window.chatQ1Blocked = false;
-
-  // (tuỳ bạn có dùng cờ khác)
-  // window.q1AnsweredCorrect = false;
+  // ✅ Reset mọi cờ về mặc định ban đầu
+  window.chatQ1Blocked = false;        // chưa chặn crush
+  window.q3ThreadUnlocked = false;     // chưa mở thread "Tài khoản ẩn danh"
+  window.fromDeclineFlow = false;      // không phải vừa quay từ decline
+  window.inboxInitializedOnce = false; // để lần mở Inbox đầu có delay "push" trở lại
 
   // --- dừng mọi âm thanh đang phát ---
   ["ringtone-audio", "call-audio", "win-audio", "lose-audio", "ting-audio"]
@@ -923,12 +903,12 @@ function resetGame() {
   if (roomPhone) roomPhone.classList.add("hidden");
   if (roomNoti)  roomNoti.classList.add("hidden");
 
-  // --- vào intro căn phòng rồi chuyển tiếp flow như cũ ---
-  // (giữ hiệu ứng mượt một chút)
+  // --- vào intro căn phòng rồi chuyển tiếp flow ---
   if (typeof startRoomIntro === "function") {
     setTimeout(() => startRoomIntro(), 400);
   }
 }
+
 
 // -------- KHỞI CHẠY --------
 
