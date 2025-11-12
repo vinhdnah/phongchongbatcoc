@@ -206,30 +206,26 @@ function openChatQ1() {
       </div>
     </div>
     <div class="phone-body" id="chat-body"></div>
-    <div class="phone-footer">
-      Câu hỏi 1: Cờ đỏ ngôn từ bạn nhận ra là gì?
-    </div>
-    <div class="choice-panel" id="chat-q1-choices"></div>
+    <!-- footer & choices sẽ được thêm SAU khi tin nhắn xong -->
+    <div id="q1-after-messages"></div>
   `;
 
   const backBtn  = phone.querySelector("#back-to-inbox");
   const chatBody = phone.querySelector("#chat-body");
-  const choices  = phone.querySelector("#chat-q1-choices");
+  const afterMsg = phone.querySelector("#q1-after-messages");
   const ting     = document.getElementById("ting-audio");
 
   // quay lại Inbox
   backBtn.addEventListener("click", () => {
     isChatQ1Active = false;
-    // clear mọi timeout còn chạy
     while (timeouts.length) clearTimeout(timeouts.pop());
     openInboxScene();
     if (q1AnsweredCorrect) setTimeout(() => openCallScene(), 3000);
   });
 
-  // Nếu đã chặn trước đó → chỉ hiện thông báo chặn, không chạy chat
+  // Nếu đã chặn → chỉ thông báo chặn
   if (window.chatQ1Blocked) {
     chatBody.innerHTML = `<div class="blocked-msg">Bạn đã chặn người này</div>`;
-    choices.innerHTML = "";
     layout.appendChild(avatarCol);
     layout.appendChild(phone);
     dialogLayer.appendChild(layout);
@@ -248,8 +244,7 @@ function openChatQ1() {
     if (ting) { try { ting.currentTime = 0; ting.play(); } catch(_){} }
   }
 
-  // === Tin nhắn diễn tiến ===
-  // Giai đoạn 1: typing → Msg1
+  // === Diễn tiến tin nhắn ===
   const typing1 = createTypingIndicator();
   chatBody.appendChild(typing1);
 
@@ -257,7 +252,6 @@ function openChatQ1() {
     if (!isChatQ1Active) return;
     typing1.remove();
 
-    // Msg 1
     chatBody.insertAdjacentHTML("beforeend", `
       <div class="bubble them">
         Mình ngưỡng mộ bạn từ lâu rồi đó.
@@ -266,7 +260,6 @@ function openChatQ1() {
     `);
     playTingSafe();
 
-    // Giai đoạn 2: typing → Msg2
     const typing2 = createTypingIndicator();
     chatBody.appendChild(typing2);
 
@@ -283,18 +276,26 @@ function openChatQ1() {
       `);
       playTingSafe();
 
-      // ⬇️ CHỈ BÂY GIỜ mới render các lựa chọn
-      renderChoices();
+      // ⬇️ CHỈ BÂY GIỜ mới thêm dòng câu hỏi + các lựa chọn
+      renderFooterAndChoices();
 
-    }, 2000)); // thời gian "đang gõ" lần 2
-  }, 3500));   // thời gian "đang gõ" lần 1
+    }, 2000));
+  }, 3500));
 
-  // Hiển thị lựa chọn sau khi tin nhắn xong
-  function renderChoices() {
-    // xóa để chắc chắn không nhân đôi
-    choices.innerHTML = "";
+  // Render dòng "Câu hỏi 1..." và các lựa chọn
+  function renderFooterAndChoices() {
+    if (!isChatQ1Active) return;
 
-    // A = Sai → Game Over
+    // Footer câu hỏi
+    const footer = document.createElement("div");
+    footer.className = "phone-footer";
+    footer.textContent = "Câu hỏi 1: Cờ đỏ ngôn từ bạn nhận ra là gì?";
+
+    // Khối lựa chọn
+    const choices = document.createElement("div");
+    choices.className = "choice-panel";
+
+    // A = Sai
     choices.appendChild(
       createChoiceBtn(
         "A",
@@ -307,7 +308,7 @@ function openChatQ1() {
       )
     );
 
-    // B = Đúng: Chặn → hiện thẻ thông báo THẮNG trong khung chat (không phải bong bóng)
+    // B = Đúng: Chặn
     choices.appendChild(
       createChoiceBtn(
         "B",
@@ -315,7 +316,6 @@ function openChatQ1() {
         () => {
           q1AnsweredCorrect = true;
           window.chatQ1Blocked = true;
-
           chatBody.innerHTML = `
             <div class="system-notice success">
               <div class="notice-icon">🏆</div>
@@ -327,12 +327,12 @@ function openChatQ1() {
               <div class="notice-hint">Nhấn “←” để quay lại hộp thoại.</div>
             </div>
           `;
-          // Người chơi chủ động bấm “←”; 3s sau ở Inbox sẽ có cuộc gọi.
+          // Footer + choices có thể giữ nguyên; người chơi sẽ bấm "←" để quay lại hộp thoại.
         }
       )
     );
 
-    // C = Đúng: Không trả lời, đi hỏi người lớn → quay ra Inbox ngay; 3s sau có cuộc gọi
+    // C = Đúng: Không trả lời, hỏi người lớn → quay Inbox; 3s sau có cuộc gọi
     choices.appendChild(
       createChoiceBtn(
         "C",
@@ -340,20 +340,23 @@ function openChatQ1() {
         () => {
           q1AnsweredCorrect = true;
           isChatQ1Active = false;
-          // clear timeout đề phòng
           while (timeouts.length) clearTimeout(timeouts.pop());
           openInboxScene();
           setTimeout(() => openCallScene(), 3000);
         }
       )
     );
+
+    // Gắn footer + choices vào đúng placeholder
+    afterMsg.innerHTML = "";
+    afterMsg.appendChild(footer);
+    afterMsg.appendChild(choices);
   }
 
   layout.appendChild(avatarCol);
   layout.appendChild(phone);
   dialogLayer.appendChild(layout);
 }
-
 
 
 
