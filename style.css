@@ -1132,3 +1132,14 @@ body {
 }
 .greet-ok:hover { transform: translateY(-1px); box-shadow: 0 14px 26px rgba(22,163,74,.6); }
 .greet-ok:active { transform: translateY(0); box-shadow: 0 10px 20px rgba(22,163,74,.45); }
+
+/* ẨN SCROLLBAR TRONG CHAT CÂU 1 */
+.phone-body,
+#chat-body {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE, Edge */
+}
+.phone-body::-webkit-scrollbar,
+#chat-body::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari */
+}

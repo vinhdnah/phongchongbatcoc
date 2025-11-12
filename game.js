@@ -221,7 +221,7 @@ function openChatQ1() {
   dialogLayer.innerHTML = "";
 
   let isChatQ1Active = true;      // còn ở ChatQ1?
-  let q1AnsweredCorrect = false;  // đã chọn đúng (B hoặc C) chưa
+  let q1AnsweredCorrect = false;  // đã chọn đúng chưa
   const timeouts = [];            // gom timeout để clear khi thoát
 
   const layout = document.createElement("div");
@@ -250,7 +250,6 @@ function openChatQ1() {
       </div>
     </div>
     <div class="phone-body" id="chat-body"></div>
-    <!-- footer & choices sẽ được thêm SAU khi tin nhắn xong -->
     <div id="q1-after-messages"></div>
   `;
 
@@ -258,6 +257,7 @@ function openChatQ1() {
   const chatBody = phone.querySelector("#chat-body");
   const afterMsg = phone.querySelector("#q1-after-messages");
   const ting     = document.getElementById("ting-audio");
+  const applause = document.getElementById("applause-audio"); // 🔊 tiếng vỗ tay chúc mừng
 
   // quay lại Inbox
   backBtn.addEventListener("click", () => {
@@ -267,7 +267,7 @@ function openChatQ1() {
     if (q1AnsweredCorrect) setTimeout(() => openCallScene(), 3000);
   });
 
-  // Nếu đã chặn → chỉ thông báo chặn
+  // Nếu đã chặn trước đó → chỉ hiện thông báo chặn
   if (window.chatQ1Blocked) {
     chatBody.innerHTML = `<div class="blocked-msg">Bạn đã chặn người này</div>`;
     layout.appendChild(avatarCol);
@@ -276,7 +276,7 @@ function openChatQ1() {
     return;
   }
 
-  // Helpers
+  // Helper
   function createTypingIndicator() {
     const typing = document.createElement("div");
     typing.className = "typing-indicator";
@@ -288,7 +288,7 @@ function openChatQ1() {
     if (ting) { try { ting.currentTime = 0; ting.play(); } catch(_){} }
   }
 
-  // === Diễn tiến tin nhắn ===
+  // ==== DIỄN TIẾN TIN NHẮN ====
   const typing1 = createTypingIndicator();
   chatBody.appendChild(typing1);
 
@@ -320,26 +320,24 @@ function openChatQ1() {
       `);
       playTingSafe();
 
-      // ⬇️ CHỈ BÂY GIỜ mới thêm dòng câu hỏi + các lựa chọn
+      // ✅ Sau khi tin nhắn xong -> hiện câu hỏi + lựa chọn
       renderFooterAndChoices();
 
     }, 2000));
   }, 3500));
 
-  // Render dòng "Câu hỏi 1..." và các lựa chọn
+  // ==== CÂU HỎI & LỰA CHỌN ====
   function renderFooterAndChoices() {
     if (!isChatQ1Active) return;
 
-    // Footer câu hỏi
     const footer = document.createElement("div");
     footer.className = "phone-footer";
     footer.textContent = "Câu hỏi 1: Cờ đỏ ngôn từ bạn nhận ra là gì?";
 
-    // Khối lựa chọn
     const choices = document.createElement("div");
     choices.className = "choice-panel";
 
-    // A = Sai
+    // A - sai
     choices.appendChild(
       createChoiceBtn(
         "A",
@@ -352,7 +350,7 @@ function openChatQ1() {
       )
     );
 
-    // B = Đúng: Chặn
+    // B - đúng
     choices.appendChild(
       createChoiceBtn(
         "B",
@@ -360,6 +358,16 @@ function openChatQ1() {
         () => {
           q1AnsweredCorrect = true;
           window.chatQ1Blocked = true;
+
+          // 🔊 phát nhạc chúc mừng
+          if (applause) {
+            try {
+              applause.currentTime = 0;
+              applause.volume = 0.8;
+              applause.play();
+            } catch(_) {}
+          }
+
           chatBody.innerHTML = `
             <div class="system-notice success">
               <div class="notice-icon">🏆</div>
@@ -371,18 +379,27 @@ function openChatQ1() {
               <div class="notice-hint">Nhấn “←” để quay lại hộp thoại.</div>
             </div>
           `;
-          // Footer + choices có thể giữ nguyên; người chơi sẽ bấm "←" để quay lại hộp thoại.
         }
       )
     );
 
-    // C = Đúng: Không trả lời, hỏi người lớn → quay Inbox; 3s sau có cuộc gọi
+    // C - đúng
     choices.appendChild(
       createChoiceBtn(
         "C",
         "Thấy sợ, không trả lời và quyết định hỏi ý kiến bố mẹ/thầy cô.",
         () => {
           q1AnsweredCorrect = true;
+
+          // 🔊 phát nhạc chúc mừng
+          if (applause) {
+            try {
+              applause.currentTime = 0;
+              applause.volume = 0.8;
+              applause.play();
+            } catch(_) {}
+          }
+
           isChatQ1Active = false;
           while (timeouts.length) clearTimeout(timeouts.pop());
           openInboxScene();
@@ -391,7 +408,6 @@ function openChatQ1() {
       )
     );
 
-    // Gắn footer + choices vào đúng placeholder
     afterMsg.innerHTML = "";
     afterMsg.appendChild(footer);
     afterMsg.appendChild(choices);
