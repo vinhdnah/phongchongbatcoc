@@ -39,13 +39,11 @@ function openInboxScene() {
       <div class="phone-header-info">
         <div class="phone-header-name">
           <img
-            src="https://static.vecteezy.com/system/resources/previews/021/495/949/non_2x/messenger-logo-icon-free-png.png"
-            class="messenger-logo"
-            alt="Messenger logo"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR_zuEOmVdXkjVgDXJvMJb_RTtb0bt5xaP8A&s"
+            class="messenger-logo" alt="Messenger logo"
           />
           Messenger
         </div>
-
         <div class="phone-header-sub">Bạn bè · Trường Bắc Sơn</div>
       </div>
     </div>
@@ -56,31 +54,33 @@ function openInboxScene() {
 
   const inbox = phone.querySelector("#inbox-list");
 
-  // helper tạo 1 dòng chat
+  // tạo 1 item
   function createInboxItem(label, preview, time, opts = {}) {
     const item = document.createElement("div");
-    item.className = "inbox-item" + (opts.isCrush ? " inbox-item-crush" : "");
-    item.dataset.id = opts.id || "";
+
+    let extraClass = "";
+    if (opts.isCrush && chatQ1Blocked) extraClass = " inbox-item-crush-blocked";
+    else if (opts.isCrush) extraClass = " inbox-item-crush";
+
+    item.className = "inbox-item" + extraClass;
+    if (opts.id) item.dataset.id = opts.id;
 
     item.innerHTML = `
       <div class="inbox-avatar${opts.isCrush ? " avatar-crush" : ""}">
-        ${opts.isCrush ? "C" : label.charAt(0)}
+        ${opts.avatarText || label.charAt(0)}
       </div>
       <div class="inbox-main">
         <div class="inbox-name">${label}</div>
         <div class="inbox-preview">${preview}</div>
       </div>
-      <div class="inbox-time">${time}</div>
+      <div class="inbox-time">${time || ""}</div>
     `;
 
-    if (opts.onClick) {
-      item.addEventListener("click", opts.onClick);
-    }
-
+    if (typeof opts.onClick === "function") item.addEventListener("click", opts.onClick);
     return item;
   }
 
-  // Tạo 8 bạn đầu tiên
+  // 8 bạn thường
   const friends = [
     { name: "Bạn 1", preview: "Mai đi học nhóm nha?", time: "19:20" },
     { name: "Bạn 2", preview: "Nộp bài văn chưa đó?", time: "19:05" },
@@ -91,35 +91,22 @@ function openInboxScene() {
     { name: "Bạn 7", preview: "Ê, mai đi ăn chè ~", time: "17:22" },
     { name: "Bạn 8", preview: "Thầy trả bài chưa?", time: "17:05" }
   ];
+  friends.forEach((f, i) => inbox.appendChild(
+    createInboxItem(f.name, f.preview, f.time, { id: "friend"+(i+1) })
+  ));
 
-  friends.forEach((f, idx) => {
-    inbox.appendChild(
-      createInboxItem(f.name, f.preview, f.time, { id: "friend" + (idx + 1) })
-    );
-  });
-
-  // Sau 0.8s, "Crush Bắc Sơn" nhảy lên đầu list
+  // “Crush Bắc Sơn” nhảy lên đầu
   setTimeout(() => {
-    const preview = chatQ1Blocked
-      ? "Đã chặn người này"
-      : "Anh có điều này muốn nói...";
-    const timeLabel = chatQ1Blocked ? "" : "Vừa xong";
-
+    const preview = chatQ1Blocked ? "Đã chặn người này" : "Mình ngưỡng mộ bạn từ....";
+    const time    = chatQ1Blocked ? "" : "Vừa xong";
     const crushItem = createInboxItem(
-      "Crush Bắc Sơn",
-      preview,
-      timeLabel,
-      {
-        id: "crush",
-        isCrush: !chatQ1Blocked, // nếu đã chặn thì không cần style crush màu mè
-        onClick: () => {
-          openChatQ1();
-        }
-      }
+      "Nguyễn Hồng Linh", preview, time,
+      { id: "crush", isCrush: true, avatarText: "C", onClick: () => openChatQ1() }
     );
     inbox.prepend(crushItem);
   }, 800);
-}   
+}
+
 
 
 function playTing() {
@@ -149,31 +136,31 @@ function openChatQ1() {
   dialogLayer.classList.remove("hidden");
   dialogLayer.innerHTML = "";
 
-  let isChatQ1Active = true;
-  let q1AnsweredCorrect = false;
+  let isChatQ1Active = true;      // còn ở ChatQ1?
+  let q1AnsweredCorrect = false;  // đã chọn đúng (B hoặc C) chưa
 
   const layout = document.createElement("div");
   layout.className = "dialog-layout";
 
+  // Nhân vật chính: NAM sinh
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
-    <img class="avatar-circle" src="img/avatar-girl.png" alt="Nhân vật nữ" />
-    <div class="avatar-name">Nhân vật nữ · Lớp 12</div>
+    <img class="avatar-circle" src="img/avatar-boy.webp" alt="Nam sinh lớp 12" />
+    <div class="avatar-name">Nam sinh · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
-      Bạn đang ở trong phòng ngủ, vừa xem lại bảng điểm thì TikTok hiện thông báo tin nhắn mới...
+      Bạn đang ở trong phòng ngủ, vừa xem lại điểm kiểm tra...
     </div>
   `;
 
   const phone = document.createElement("div");
   phone.className = "phone-shell";
-
   phone.innerHTML = `
     <div class="phone-header">
       <button class="back-btn" id="back-to-inbox">←</button>
-      <img class="phone-header-avatar avatar-crush" src="img/avatar-crush.jpg" alt="Crush Bắc Sơn" />
+      <img class="phone-header-avatar avatar-crush" src="img/avatar-girl.png" alt="Crush Bắc Sơn" />
       <div class="phone-header-info">
-        <div class="phone-header-name">Crush Bắc Sơn</div>
+        <div class="phone-header-name">Nguyễn Hồng Linh</div>
         <div class="phone-header-sub">Hoạt động gần đây</div>
       </div>
     </div>
@@ -184,52 +171,41 @@ function openChatQ1() {
     <div class="choice-panel" id="chat-q1-choices"></div>
   `;
 
-  const backBtn = phone.querySelector("#back-to-inbox");
+  const backBtn  = phone.querySelector("#back-to-inbox");
   const chatBody = phone.querySelector("#chat-body");
-  const choices = phone.querySelector("#chat-q1-choices");
-  const ting = document.getElementById("ting-audio");
+  const choices  = phone.querySelector("#chat-q1-choices");
+  const ting     = document.getElementById("ting-audio");
 
-  // Nút quay lại
+  // Nút quay lại Inbox: chỉ khi đã trả lời đúng mới nối tiếp sang cuộc gọi (sau 3s)
   backBtn.addEventListener("click", () => {
     isChatQ1Active = false;
     openInboxScene();
-
-    if (q1AnsweredCorrect) {
-      setTimeout(() => {
-        openCallScene();
-      }, 3000);
-    }
+    if (q1AnsweredCorrect) setTimeout(() => openCallScene(), 3000);
   });
 
-  // 🔹 NẾU ĐÃ CHẶN TRƯỚC ĐÓ → chỉ hiện "Bạn đã chặn người này"
-  if (chatQ1Blocked) {
-    chatBody.innerHTML = `
-      <div class="blocked-msg">Bạn đã chặn người này</div>
-    `;
-    choices.innerHTML = ""; // không cho chọn lại
+  // Nếu đã chặn trước đó → chỉ hiện thông báo chặn, không chạy chat
+  if (window.chatQ1Blocked) {
+    chatBody.innerHTML = `<div class="blocked-msg">Bạn đã chặn người này</div>`;
+    choices.innerHTML = "";
     layout.appendChild(avatarCol);
     layout.appendChild(phone);
     dialogLayer.appendChild(layout);
-    return; // ❗ không chạy typing / tin nhắn nữa
+    return;
   }
 
-  // 🚫 Từ đây trở xuống là logic bình thường khi CHƯA chặn
+  // Helpers
   function createTypingIndicator() {
     const typing = document.createElement("div");
     typing.className = "typing-indicator";
     typing.innerHTML = `<span></span><span></span><span></span>`;
     return typing;
   }
-
   function playTing() {
     if (!isChatQ1Active) return;
-    if (ting) {
-      ting.currentTime = 0;
-      ting.play().catch(() => {});
-    }
+    if (ting) { ting.currentTime = 0; ting.play().catch(()=>{}); }
   }
 
-  // --- Tin nhắn 1 & 2 ---
+  // — Tin nhắn 1 + 2: giọng nữ ngọt ngào, đánh vào điểm yếu tâm lý của nam sinh —
   const typing1 = createTypingIndicator();
   chatBody.appendChild(typing1);
 
@@ -237,70 +213,73 @@ function openChatQ1() {
     if (!isChatQ1Active) return;
     typing1.remove();
 
-    chatBody.insertAdjacentHTML(
-      "beforeend",
-      `
-        <div class="bubble them">
-          Anh thấy em ở trước cổng trường chiều nay. Em xinh quá.<br/>
-          Anh biết em đang buồn vì điểm kiểm tra thấp. Anh sẽ giúp em.
-        </div>
-        <div class="bubble-meta">Đã gửi · 1 phút trước</div>
-      `
-    );
+    // Msg 1
+    chatBody.insertAdjacentHTML("beforeend", `
+      <div class="bubble them">
+        Mình ngưỡng mộ bạn từ lâu rồi đó.
+      </div>
+      <div class="bubble-meta">Đã gửi · 1 phút trước</div>
+    `);
     playTing();
 
+    // Msg 2
     const typing2 = createTypingIndicator();
     chatBody.appendChild(typing2);
-
     setTimeout(() => {
       if (!isChatQ1Active) return;
       typing2.remove();
 
-      chatBody.insertAdjacentHTML(
-        "beforeend",
-        `
-          <div class="bubble them">
-            Hãy nhắn riêng với anh, đừng kể với ai nhé.
-          </div>
-          <div class="bubble-meta">Đã gửi</div>
-        `
-      );
+      chatBody.insertAdjacentHTML("beforeend", `
+        <div class="bubble them">
+          Mình thấy bạn thật sự rất tuyệt vời. Nhưng dạo này bạn có vẻ buồn — có chuyện gì sao?<br/>
+          Bạn có thể chia sẻ với mình, mình muốn làm bạn online của bạn.
+        </div>
+        <div class="bubble-meta">Đã gửi</div>
+      `);
       playTing();
     }, 2000);
   }, 3500);
 
-  // --- Các lựa chọn ---
-  // A = sai
+  // — Lựa chọn —
+  // A = SAi → game over
   choices.appendChild(
     createChoiceBtn(
       "A",
-      "Xem đây là người hâm mộ dễ thương, thoải mái nhắn lại và kể chuyện riêng tư.",
+      "Nghĩ đây là người hâm mộ dễ thương → kể chuyện riêng tư.",
       () => {
         showGameOver(
-          "Bạn coi nhẹ việc người lạ biết rõ nơi chốn, tâm trạng và khuyến khích giữ bí mật. Đó là bước đầu để cô lập và thao túng bạn."
+          "Bạn bị lời khen & thân mật quá mức làm mờ cảnh giác. Đây là bước khởi đầu để thao túng/lừa đảo."
         );
       }
     )
   );
 
-  // B = đúng: chặn
+  // B = ĐÚNG: Chặn → THẮNG bằng THẺ THÔNG BÁO (không phải bong bóng chat)
   choices.appendChild(
     createChoiceBtn(
       "B",
-      "Nhận ra người lạ biết quá chi tiết về mình và yêu cầu giữ bí mật → Cờ đỏ thao túng, chặn ngay.",
+      "Nhận ra người lạ và chặn luôn",
       () => {
         q1AnsweredCorrect = true;
-        chatQ1Blocked = true; // 🔴 nhớ trạng thái chặn
+        window.chatQ1Blocked = true;
 
         chatBody.innerHTML = `
-          <div class="blocked-msg">Bạn đã chặn người này</div>
+          <div class="system-notice success">
+            <div class="notice-icon">🏆</div>
+            <div class="notice-title">Chúc mừng bạn đã thoát hiểm!</div>
+            <div class="notice-sub">
+              Bạn đã tránh được nguy cơ bị kẻ xấu lạm dụng, thao túng tâm lý
+              và về lâu dài có thể bị bắt cóc online.
+            </div>
+            <div class="notice-hint">Nhấn “←” để quay lại hộp thoại.</div>
+          </div>
         `;
-        // vẫn để choices để người chơi biết mình đã chọn B, hoặc bạn có thể choices.innerHTML = ""
+        // Không auto thoát: người chơi chủ động bấm “←”; 3s sau ở Inbox sẽ có cuộc gọi.
       }
     )
   );
 
-  // C = đúng: báo người lớn → thoát ra Inbox ngay, chờ call
+  // C = ĐÚNG: Không trả lời, hỏi người lớn → quay ra Inbox ngay, rồi 3s sau có cuộc gọi
   choices.appendChild(
     createChoiceBtn(
       "C",
@@ -320,6 +299,7 @@ function openChatQ1() {
 }
 
 
+
 // -------- UI CUỘC GỌI – NGHE AUDIO --------
 
 function openCallScene() {
@@ -332,8 +312,8 @@ function openCallScene() {
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
-    <img class="avatar-circle" src="img/avatar-girl.png" alt="Nhân vật nữ" />
-    <div class="avatar-name">Nhân vật nữ · Lớp 12</div>
+    <img class="avatar-circle" src="img/avatar-boy.webp" alt="Nhân vật nữ" />
+    <div class="avatar-name">Nhân vật nam · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
       Vài phút sau, một số Zalo lạ gọi video đến điện thoại của bạn...
     </div>
@@ -757,25 +737,41 @@ function showWin() {
 // -------- RESET GAME --------
 
 function resetGame() {
-  isFinished = false;
+  // --- trạng thái chung ---
   scene = "room";
+  isFinished = false;
 
-  // Ẩn layer câu hỏi
-  dialogLayer.classList.add("hidden");
-  dialogLayer.innerHTML = "";
+  // 🔁 Reset cờ chặn Q1 về mặc định (chưa chặn)
+  window.chatQ1Blocked = false;
 
-  // reset audio
-  if (callAudio) {
-    callAudio.pause();
-    callAudio.currentTime = 0;
+  // (tuỳ bạn có dùng cờ khác)
+  // window.q1AnsweredCorrect = false;
+
+  // --- dừng mọi âm thanh đang phát ---
+  ["ringtone-audio", "call-audio", "win-audio", "lose-audio", "ting-audio"]
+    .map(id => document.getElementById(id))
+    .filter(Boolean)
+    .forEach(a => { try { a.pause(); a.currentTime = 0; } catch(_){} });
+
+  // --- reset UI ---
+  const dialogLayer = document.getElementById("dialog-layer");
+  const roomScene   = document.getElementById("room-scene");
+  const roomPhone   = document.getElementById("room-phone");
+  const roomNoti    = document.getElementById("room-noti");
+
+  if (dialogLayer) {
+    dialogLayer.classList.add("hidden");
+    dialogLayer.innerHTML = "";
   }
+  if (roomScene) roomScene.classList.remove("hidden");
+  if (roomPhone) roomPhone.classList.add("hidden");
+  if (roomNoti)  roomNoti.classList.add("hidden");
 
-  // reset noti/điện thoại
-  roomPhone.classList.add("hidden");
-  roomNoti.classList.add("hidden");
-
-  // bắt đầu lại intro
-  setTimeout(startRoomIntro, 300);
+  // --- vào intro căn phòng rồi chuyển tiếp flow như cũ ---
+  // (giữ hiệu ứng mượt một chút)
+  if (typeof startRoomIntro === "function") {
+    setTimeout(() => startRoomIntro(), 400);
+  }
 }
 
 // -------- KHỞI CHẠY --------

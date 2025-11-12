@@ -848,3 +848,64 @@ body {
   opacity: 0.9;
   letter-spacing: 0.4px;
 }
+
+/* Logo messenger cạnh tiêu đề */
+.messenger-logo {
+  width: 20px; height: 20px; object-fit: contain;
+  vertical-align: middle; margin-right: 6px; border-radius: 50%;
+  transform: translateY(-1px); box-shadow: 0 0 4px rgba(59,130,246,.6);
+}
+
+/* Danh sách inbox (nếu chưa có) */
+.inbox-list { padding: 8px; display: flex; flex-direction: column; gap: 6px; height: 430px; overflow-y: auto; }
+.inbox-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px;
+  background: rgba(15,23,42,.9); border:1px solid rgba(31,41,55,.9); cursor:pointer;
+  transition: background .12s, transform .08s, box-shadow .12s, border-color .12s;
+}
+.inbox-item:hover { background: radial-gradient(circle at top left, rgba(56,189,248,.2), rgba(15,23,42,.96));
+  border-color: rgba(56,189,248,.8); transform: translateY(-1px); box-shadow: 0 10px 22px rgba(15,23,42,.9);
+}
+.inbox-avatar { width:30px; height:30px; border-radius:999px; background:#1f2937; color:#e5e7eb; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; }
+.inbox-main { flex:1; min-width:0; }
+.inbox-name { font-size:13px; font-weight:600; color:#e5e7eb; }
+.inbox-preview { font-size:11px; color:#9ca3af; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.inbox-time { font-size:11px; color:#6b7280; }
+
+/* trạng thái crush */
+.inbox-item-crush .inbox-avatar { background:#1d4ed8; color:#e0f2fe; }
+.inbox-item-crush-blocked .inbox-preview { color:#6b7280; font-style: italic; }
+
+/* Bubble đang soạn (3 chấm) */
+.typing-indicator { align-self:flex-start; margin-top:4px; padding:6px 10px; border-radius:16px; background:#1f2937; display:inline-flex; gap:4px; }
+.typing-indicator span { width:6px; height:6px; border-radius:999px; background:#e5e7eb; opacity:.3; animation: typingBounce 1s infinite ease-in-out; }
+.typing-indicator span:nth-child(2){ animation-delay:.15s; }
+.typing-indicator span:nth-child(3){ animation-delay:.3s; }
+@keyframes typingBounce { 0%,80%,100%{ transform:translateY(0); opacity:.2; } 40%{ transform:translateY(-3px); opacity:1; } }
+
+/* Thẻ thông báo hệ thống (THẮNG) – KHÔNG phải bong bóng chat */
+.system-notice {
+  text-align: center;
+  padding: 18px 16px;
+  margin: 90px 12px 20px;
+  border-radius: 14px;
+  background: rgba(30, 64, 175, .18);
+  border: 1px solid rgba(59, 130, 246, .6);
+  color: #e5e7eb;
+  line-height: 1.5;
+  box-shadow: 0 10px 24px rgba(59,130,246,.2);
+}
+.system-notice.success {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.65);
+  box-shadow: 0 10px 24px rgba(16,185,129,.2);
+}
+.notice-icon { font-size: 22px; margin-bottom: 6px; }
+.notice-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; color: #d1fae5; }
+.notice-sub { font-size: 13px; color: #c7f9e9; }
+.notice-hint { font-size: 12px; color: #93e4d3; margin-top: 10px; opacity:.9; }
+
+/* Khi đã chặn: hiện lại chat chỉ có dòng này */
+.blocked-msg {
+  text-align: center; color: #fca5a5; font-weight: 600; font-size: 14px;
+  margin-top: 180px; opacity: .9; letter-spacing: .4px;
+}
