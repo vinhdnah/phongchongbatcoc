@@ -909,3 +909,41 @@ body {
   text-align: center; color: #fca5a5; font-weight: 600; font-size: 14px;
   margin-top: 180px; opacity: .9; letter-spacing: .4px;
 }
+
+/* Thông báo thắng ở giữa màn hình (tự ẩn) */
+.center-notice {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  min-width: 280px;
+  max-width: 520px;
+  padding: 16px 18px;
+  text-align: center;
+  border-radius: 14px;
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.65);
+  color: #d1fae5;
+  box-shadow: 0 20px 40px rgba(16,185,129,0.25);
+  backdrop-filter: blur(6px);
+}
+
+.center-notice .notice-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.center-notice .notice-sub {
+  font-size: 13px;
+  color: #c7f9e9;
+}
+
+.center-notice.fade-out {
+  animation: fadeOutCenter 0.5s ease forwards;
+}
+
+@keyframes fadeOutCenter {
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.98); }
+}
