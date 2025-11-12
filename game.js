@@ -156,7 +156,7 @@ function openInboxScene() {
     const addAnon = () => {
       const anonItem = createInboxItem(
         "Tài khoản ẩn danh",
-        "“Tao có hết ảnh của mày...”",
+        "Tao có hết ảnh của mày...",
         "Vừa xong",
         { id: "anon", avatarText: "Ẩn" }
       );
@@ -220,14 +220,13 @@ function openChatQ1() {
   dialogLayer.classList.remove("hidden");
   dialogLayer.innerHTML = "";
 
-  let isChatQ1Active = true;      // còn ở ChatQ1?
-  let q1AnsweredCorrect = false;  // đã chọn đúng chưa
-  const timeouts = [];            // gom timeout để clear khi thoát
+  let isChatQ1Active = true;
+  let q1AnsweredCorrect = false;
+  const timeouts = [];
 
   const layout = document.createElement("div");
   layout.className = "dialog-layout";
 
-  // Nhân vật chính: NAM sinh
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
@@ -239,7 +238,7 @@ function openChatQ1() {
   `;
 
   const phone = document.createElement("div");
-  phone.className = "phone-shell";
+  phone.className = "phone-shell no-scrollbar";
   phone.innerHTML = `
     <div class="phone-header">
       <button class="back-btn" id="back-to-inbox">←</button>
@@ -257,9 +256,8 @@ function openChatQ1() {
   const chatBody = phone.querySelector("#chat-body");
   const afterMsg = phone.querySelector("#q1-after-messages");
   const ting     = document.getElementById("ting-audio");
-  const applause = document.getElementById("applause-audio"); // 🔊 tiếng vỗ tay chúc mừng
+  const applause = document.getElementById("applause-audio");
 
-  // quay lại Inbox
   backBtn.addEventListener("click", () => {
     isChatQ1Active = false;
     while (timeouts.length) clearTimeout(timeouts.pop());
@@ -267,7 +265,6 @@ function openChatQ1() {
     if (q1AnsweredCorrect) setTimeout(() => openCallScene(), 3000);
   });
 
-  // Nếu đã chặn trước đó → chỉ hiện thông báo chặn
   if (window.chatQ1Blocked) {
     chatBody.innerHTML = `<div class="blocked-msg">Bạn đã chặn người này</div>`;
     layout.appendChild(avatarCol);
@@ -276,7 +273,6 @@ function openChatQ1() {
     return;
   }
 
-  // Helper
   function createTypingIndicator() {
     const typing = document.createElement("div");
     typing.className = "typing-indicator";
@@ -288,7 +284,7 @@ function openChatQ1() {
     if (ting) { try { ting.currentTime = 0; ting.play(); } catch(_){} }
   }
 
-  // ==== DIỄN TIẾN TIN NHẮN ====
+  // ===== DIỄN TIẾN TIN NHẮN =====
   const typing1 = createTypingIndicator();
   chatBody.appendChild(typing1);
 
@@ -297,9 +293,7 @@ function openChatQ1() {
     typing1.remove();
 
     chatBody.insertAdjacentHTML("beforeend", `
-      <div class="bubble them">
-        Mình ngưỡng mộ bạn từ lâu rồi đó.
-      </div>
+      <div class="bubble them">Mình ngưỡng mộ bạn từ lâu rồi đó.</div>
       <div class="bubble-meta">Đã gửi · 1 phút trước</div>
     `);
     playTingSafe();
@@ -319,14 +313,11 @@ function openChatQ1() {
         <div class="bubble-meta">Đã gửi</div>
       `);
       playTingSafe();
-
-      // ✅ Sau khi tin nhắn xong -> hiện câu hỏi + lựa chọn
       renderFooterAndChoices();
-
     }, 2000));
   }, 3500));
 
-  // ==== CÂU HỎI & LỰA CHỌN ====
+  // ===== CÂU HỎI & LỰA CHỌN =====
   function renderFooterAndChoices() {
     if (!isChatQ1Active) return;
 
@@ -350,7 +341,7 @@ function openChatQ1() {
       )
     );
 
-    // B - đúng
+    // B - đúng (tự động quay Inbox sau 5s, rồi 3s sau có cuộc gọi)
     choices.appendChild(
       createChoiceBtn(
         "B",
@@ -359,15 +350,12 @@ function openChatQ1() {
           q1AnsweredCorrect = true;
           window.chatQ1Blocked = true;
 
-          // 🔊 phát nhạc chúc mừng
-          if (applause) {
-            try {
-              applause.currentTime = 0;
-              applause.volume = 0.8;
-              applause.play();
-            } catch(_) {}
-          }
+          if (applause) { try { applause.currentTime = 0; applause.volume = 0.8; applause.play(); } catch(_){} }
 
+          // Ẩn câu hỏi + đáp án
+          afterMsg.style.display = "none";
+
+          // Hiện bảng chúc mừng
           chatBody.innerHTML = `
             <div class="system-notice success">
               <div class="notice-icon">🏆</div>
@@ -376,14 +364,21 @@ function openChatQ1() {
                 Bạn đã tránh được nguy cơ bị kẻ xấu lạm dụng, thao túng tâm lý
                 và về lâu dài có thể bị bắt cóc online.
               </div>
-              <div class="notice-hint">Nhấn “←” để quay lại hộp thoại.</div>
             </div>
           `;
+
+          // ⏳ 5s sau tự quay về Inbox, rồi 3s sau rung cuộc gọi
+          timeouts.push(setTimeout(() => {
+            if (!isChatQ1Active) return;        // nếu user đã rời
+            isChatQ1Active = false;
+            openInboxScene();
+            setTimeout(() => openCallScene(), 3000);
+          }, 5000));
         }
       )
     );
 
-    // C - đúng
+    // C - đúng (quay Inbox ngay)
     choices.appendChild(
       createChoiceBtn(
         "C",
@@ -391,15 +386,9 @@ function openChatQ1() {
         () => {
           q1AnsweredCorrect = true;
 
-          // 🔊 phát nhạc chúc mừng
-          if (applause) {
-            try {
-              applause.currentTime = 0;
-              applause.volume = 0.8;
-              applause.play();
-            } catch(_) {}
-          }
+          if (applause) { try { applause.currentTime = 0; applause.volume = 0.8; applause.play(); } catch(_){} }
 
+          afterMsg.style.display = "none";
           isChatQ1Active = false;
           while (timeouts.length) clearTimeout(timeouts.pop());
           openInboxScene();
@@ -500,33 +489,24 @@ function startCallAudio(phoneShell) {
   const acceptBtn = phoneShell.querySelector("#btn-accept");
   const declineBtn = phoneShell.querySelector("#btn-decline");
   const headerSub = phoneShell.querySelector(".phone-header-sub");
-  const timerEl = phoneShell.querySelector("#call-timer");
+  const timerEl   = phoneShell.querySelector("#call-timer");
 
   let seconds = 0;
 
-  // Hiện timer + trạng thái đang gọi
-  if (timerEl) {
-    timerEl.style.display = "block";
-    timerEl.textContent = "00:00";
-  }
-  if (headerSub) {
-    headerSub.textContent = "Đang trong cuộc gọi...";
-  }
+  // Hiện timer + trạng thái
+  if (timerEl) { timerEl.style.display = "block"; timerEl.textContent = "00:00"; }
+  if (headerSub) headerSub.textContent = "Đang trong cuộc gọi...";
 
-  // Ẩn nút từ chối ban đầu
-  if (declineBtn) {
-    declineBtn.style.display = "none";
-  }
-
-  // Đổi nút chấp nhận thành nút tắt máy (đỏ ✕)
+  // Ẩn nút từ chối; đổi nút nhận thành nút gác máy
+  if (declineBtn) declineBtn.style.display = "none";
   if (acceptBtn) {
-    acceptBtn.disabled = false;     // đảm bảo không bị disable
+    acceptBtn.disabled = false;
     acceptBtn.classList.remove("accept");
     acceptBtn.classList.add("decline");
     acceptBtn.textContent = "✕";
   }
 
-  // Đếm thời gian cuộc gọi
+  // Đếm thời gian
   const timerId = setInterval(() => {
     seconds++;
     if (timerEl) {
@@ -536,33 +516,23 @@ function startCallAudio(phoneShell) {
     }
   }, 1000);
 
-  function endCallAndGoNext() {
+  function endCallAndGoQ2() {
     clearInterval(timerId);
-    if (callAudio) {
-      callAudio.pause();
-      callAudio.currentTime = 0;
-    }
-    openCallQuestion(); // sang Câu hỏi 2
+    if (callAudio) { try { callAudio.pause(); callAudio.currentTime = 0; } catch(_){} }
+    openCallQuestion();   // ✅ quay sang CÂU 2 như flow cũ
   }
 
-  // Bấm nút ✕ (sau khi nhận) để kết thúc cuộc gọi
-  if (acceptBtn) {
-    acceptBtn.onclick = endCallAndGoNext; // ghi đè handler cũ
-  }
+  // Bấm ✕ để kết thúc cuộc gọi
+  if (acceptBtn) acceptBtn.onclick = endCallAndGoQ2;
 
-  // Phát audio (nếu có)
+  // Phát audio cuộc gọi
   if (callAudio) {
     callAudio.currentTime = 0;
-    callAudio.play().catch(() => {
-      // nếu bị chặn autoplay: vẫn để người chơi tự bấm ✕
-    });
-
-    // Khi audio phát xong thì tự sang câu hỏi
-    callAudio.onended = () => {
-      endCallAndGoNext();
-    };
+    callAudio.play().catch(()=>{});
+    callAudio.onended = () => endCallAndGoQ2();
   }
 }
+
 
 // ----------Thêm hàm mới openAnonChatQ3()----------
 function openAnonChatQ3() {
@@ -570,104 +540,132 @@ function openAnonChatQ3() {
   dialogLayer.classList.remove("hidden");
   dialogLayer.innerHTML = "";
 
-  window.q3ThreadUnlocked = true; // đảm bảo inbox có thread này
+  let isActive = true;
+  const timeouts = [];
 
   const layout = document.createElement("div");
   layout.className = "dialog-layout";
 
-  // cột avatar (nam sinh)
+  // Cột avatar nhân vật chính (nam)
   const avatarCol = document.createElement("div");
   avatarCol.className = "dialog-avatar";
   avatarCol.innerHTML = `
     <img class="avatar-circle" src="img/avatar-boy.webp" alt="Nam sinh lớp 12" />
     <div class="avatar-name">Nam sinh · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
-      Bạn vừa chặn số lạ thì xuất hiện một tài khoản nặc danh...
+      Sau cuộc gọi, bạn nhận thêm tin nhắn nặc danh...
     </div>
   `;
 
-  // điện thoại
+  // Khung điện thoại
   const phone = document.createElement("div");
-  phone.className = "phone-shell";
+  phone.className = "phone-shell no-scrollbar";
   phone.innerHTML = `
     <div class="phone-header">
       <button class="back-btn" id="back-to-inbox">←</button>
       <div class="phone-header-info">
         <div class="phone-header-name">Tài khoản ẩn danh</div>
-        <div class="phone-header-sub">Hoạt động gần đây</div>
+        <div class="phone-header-sub">Vừa hoạt động</div>
       </div>
     </div>
-    <div class="phone-body" id="chat-body-q3"></div>
-    <div class="phone-footer">
-      Câu hỏi 3: Hành động nào giúp bạn còn đường sống an toàn nhất?
-    </div>
-    <div class="choice-panel" id="q3-choices"></div>
+    <div class="phone-body" id="q3-chat-body"></div>
+    <div id="q3-after-messages"></div>
   `;
 
-  const backBtn = phone.querySelector("#back-to-inbox");
-  const chatBody = phone.querySelector("#chat-body-q3");
-  const choices = phone.querySelector("#q3-choices");
+  const backBtn   = phone.querySelector("#back-to-inbox");
+  const chatBody  = phone.querySelector("#q3-chat-body");
+  const afterBox  = phone.querySelector("#q3-after-messages");
+  const tingAudio = document.getElementById("ting-audio");
 
   backBtn.addEventListener("click", () => {
+    isActive = false;
+    while (timeouts.length) clearTimeout(timeouts.pop());
     openInboxScene();
   });
 
-  // typing indicator
+  // helper
   function typing() {
     const t = document.createElement("div");
     t.className = "typing-indicator";
     t.innerHTML = `<span></span><span></span><span></span>`;
     return t;
   }
+  function playTing() {
+    if (!isActive) return;
+    if (tingAudio) { try { tingAudio.currentTime = 0; tingAudio.play(); } catch(_){} }
+  }
+  function scrollBottom() {
+    try { chatBody.scrollTop = chatBody.scrollHeight; } catch (_) {}
+  }
 
-  // chuỗi tin nhắn (giống ảnh bạn gửi)
+  // ===== Hiệu ứng typing -> tin nhắn đe doạ =====
   const t1 = typing();
   chatBody.appendChild(t1);
-  setTimeout(() => {
+  scrollBottom();
+
+  timeouts.push(setTimeout(() => {
+    if (!isActive) return;
     t1.remove();
-    chatBody.insertAdjacentHTML(
-      "beforeend",
-      `
+
+    // Tin nhắn ẩn danh
+    chatBody.insertAdjacentHTML("beforeend", `
       <div class="bubble them">
         "Tao có hết ảnh của mày. 15 phút nữa, đến cổng trường <b>một mình</b>.
         Không đến là tao đăng hết ảnh lên mạng."
       </div>
-      <div class="bubble-meta">Đã gửi · Vừa xong</div>
-    `
-    );
-    // lựa chọn sau khi đã hiện tin
-    renderChoices();
-  }, 1200);
+      <div class="bubble-meta">Đã gửi</div>
+    `);
+    playTing();
+    scrollBottom();
 
-  function renderChoices() {
-    choices.innerHTML = "";
-    choices.appendChild(
-      createChoiceBtn(
-        "A",
-        "Lén tới gặp một mình để cầu xin, mong hắn xóa ảnh.",
-        () => {
-          showGameOver("Đi gặp kẻ xấu một mình là cực kỳ nguy hiểm...");
-        }
-      )
+    // 👉 Chỉ bây giờ mới render câu hỏi + các phương án
+    renderQ3Question();
+
+  }, 1800));
+
+  // ===== Render câu hỏi + lựa chọn SAU khi tin nhắn đã hiện xong =====
+  function renderQ3Question() {
+    if (!isActive) return;
+
+    // Dòng câu hỏi
+    const footer = document.createElement("div");
+    footer.className = "phone-footer";
+    footer.textContent = "Câu hỏi 3: Hành động nào giúp bạn còn đường sống an toàn nhất?";
+
+    // Lựa chọn
+    const panel = document.createElement("div");
+    panel.className = "choice-panel";
+
+    // A - sai
+    panel.appendChild(
+      createChoiceBtn("A", "Lén tới gặp một mình để cầu xin, mong hắn xóa ảnh.", () => {
+        showGameOver(
+          "Đi gặp kẻ xấu một mình là cực kỳ nguy hiểm. Bạn có thể bị tấn công, bắt cóc hoặc tiếp tục bị tống tiền."
+        );
+      })
     );
-    choices.appendChild(
-      createChoiceBtn(
-        "B",
-        "Ở yên trong nhà/trường, báo ngay cho giáo viên hoặc phụ huynh, sau đó gọi tổng đài 111.",
-        () => {
-          showWin();
-        }
-      )
+
+    // B - đúng (WIN)
+    panel.appendChild(
+      createChoiceBtn("B", "Ở yên trong nhà/trường, báo ngay cho giáo viên hoặc phụ huynh, sau đó gọi tổng đài 111.", () => {
+        // Ẩn câu hỏi + lựa chọn trước khi chuyển kết quả (gọn UI)
+        afterBox.style.display = "none";
+        showWin();
+      })
     );
-    choices.appendChild(
-      createChoiceBtn(
-        "C",
-        "Rủ thêm vài đứa bạn thân ra cổng trường đánh hắn cho bõ tức.",
-        () => {
-          showGameOver("Dùng bạo lực không làm bạn an toàn hơn, còn có thể vi phạm pháp luật.");
-        }
-      )
+
+    // C - sai
+    panel.appendChild(
+      createChoiceBtn("C", "Rủ thêm vài đứa bạn thân ra cổng trường đánh hắn cho bõ tức.", () => {
+        showGameOver(
+          "Dùng bạo lực không làm bạn an toàn hơn, mà còn có thể khiến bạn và bạn bè vi phạm pháp luật."
+        );
+      })
     );
+
+    afterBox.innerHTML = "";
+    afterBox.appendChild(footer);
+    afterBox.appendChild(panel);
   }
 
   layout.appendChild(avatarCol);
@@ -692,9 +690,12 @@ function openCallQuestion() {
       Trong cuộc gọi, giọng nam nghiêm trọng nói:
       <br/><br/>
       <i>
-      "Tôi là công an mạng. Tài khoản của cậu liên quan đến một vụ lừa đảo lớn...
-      Cậu phải gửi 200k tiền 'lệ phí xác minh'..."
+      "Tôi là công an mạng. Tài khoản của cậu liên quan đến một vụ lừa đảo lớn.
+      Tôi đang truy cập vào máy tính cá nhân của cậu. Nếu cậu cúp máy, cậu sẽ bị bắt.
+      Cậu phải gửi 200k tiền 'lệ phí xác minh' vào số tài khoản này ngay lập tức để tôi kiểm tra."
       </i>
+      <br/><br/>
+      Tim bạn đập nhanh, tay hơi run. Bạn chỉ có vài giây để quyết định.
     </div>
     <div class="question">Câu hỏi 2: Bạn nên làm gì để không rơi vào bẫy?</div>
   `;
@@ -702,27 +703,41 @@ function openCallQuestion() {
   const optionsDiv = document.createElement("div");
   optionsDiv.className = "options";
 
+  // A - Sai
   optionsDiv.appendChild(
     createChoiceBtn("A", "Vội vã chuyển ngay 200k để khỏi bị bắt, tính sau.", () => {
-      showGameOver("Bạn đã chủ động chuyển tiền cho kẻ mạo danh công an...");
+      showGameOver(
+        "Bạn đã chủ động chuyển tiền cho kẻ mạo danh công an. Công an thật không làm việc qua Zalo, không dọa bắt và không yêu cầu chuyển 'lệ phí xác minh' vào tài khoản cá nhân."
+      );
     })
   );
 
+  // ✅ B - Đúng: quay về INBOX, mở khoá thread Ẩn danh; Q3 sẽ hiển thị như chat (typing → tin nhắn → mới hiện câu hỏi)
   optionsDiv.appendChild(
     createChoiceBtn(
       "B",
       "Cúp máy ngay, chặn số, lưu lại bằng chứng rồi báo với phụ huynh/giáo viên.",
       () => {
-        window.q3ThreadUnlocked = true; // mở thread ẩn danh
-        openAnonChatQ3();               // sang phần 3 theo kiểu chat
+        // Mở khoá Câu 3 dưới dạng 1 thread mới ở Inbox
+        window.q3ThreadUnlocked = true;
+        window.fromDeclineFlow  = true;  // để Inbox có hiệu ứng 'vừa tới'
+        openInboxScene();
+        // (đừng gọi openQuestion3 trực tiếp nữa; thread 'Tài khoản ẩn danh' sẽ xuất hiện để người chơi bấm vào)
       }
     )
   );
 
+  // C - Sai
   optionsDiv.appendChild(
-    createChoiceBtn("C", "Giữ máy, xin xỏ và cố gắng giải thích để họ 'tha'.", () => {
-      showGameOver("Càng kéo dài cuộc gọi, bạn càng bị gây áp lực...");
-    })
+    createChoiceBtn(
+      "C",
+      "Giữ máy, xin xỏ và cố gắng giải thích để họ 'tha'.",
+      () => {
+        showGameOver(
+          "Càng kéo dài cuộc gọi, bạn càng bị gây áp lực tâm lý, dễ bị dụ cung cấp thêm thông tin cá nhân hoặc chuyển thêm tiền."
+        );
+      }
+    )
   );
 
   card.appendChild(optionsDiv);
