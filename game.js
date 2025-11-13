@@ -819,16 +819,10 @@ function showGameOver(reasonText) {
   isFinished = true;
   dialogLayer.innerHTML = "";
 
-  // Tắt mọi âm thanh đang phát (chuông + cuộc gọi)
+  // Tắt âm thanh
   const ringtone = document.getElementById("ringtone-audio");
-  if (ringtone) {
-    ringtone.pause();
-    ringtone.currentTime = 0;
-  }
-  if (callAudio) {
-    callAudio.pause();
-    callAudio.currentTime = 0;
-  }
+  if (ringtone) { ringtone.pause(); ringtone.currentTime = 0; }
+  if (callAudio) { callAudio.pause(); callAudio.currentTime = 0; }
 
   const card = document.createElement("div");
   card.className = "scene-card";
@@ -849,9 +843,12 @@ function showGameOver(reasonText) {
       <ul style="margin-top:6px;padding-left:18px;list-style:disc;">
         <li>Không chuyển tiền, không gửi thêm ảnh hay thông tin cá nhân.</li>
         <li>Không đi gặp kẻ lạ một mình, dù bị đe dọa thế nào.</li>
-        <li>Báo ngay cho người lớn đáng tin cậy và gọi tổng đài <b>111</b> để được hỗ trợ.</li>
+        <li>Báo ngay cho thầy cô, phụ huynh hoặc gọi tổng đài <b>111</b>.</li>
       </ul>
     </div>
+
+    <!-- NEW FOOTER -->
+    <div class="copyright-footer">All rights reserved © 2025</div>
   `;
 
   const actions = document.createElement("div");
@@ -868,9 +865,9 @@ function showGameOver(reasonText) {
   tipsBtn.addEventListener("click", () => {
     alert(
       "3 quy tắc vàng:\n\n" +
-        "1) Không thỏa hiệp: không chuyển tiền, không gửi thêm ảnh/thông tin.\n" +
-        "2) Không hoảng loạn, không đi gặp một mình.\n" +
-        "3) Báo ngay cho thầy cô, phụ huynh hoặc gọi 111."
+      "1) Không thỏa hiệp: không chuyển tiền, không gửi thêm ảnh/thông tin.\n" +
+      "2) Không hoảng loạn, không đi gặp một mình.\n" +
+      "3) Báo ngay cho thầy cô, phụ huynh hoặc gọi 111."
     );
   });
 
@@ -880,7 +877,7 @@ function showGameOver(reasonText) {
 
   dialogLayer.appendChild(card);
 
-  // 🔊 Phát nhạc thua
+  // Âm thanh thua
   const loseAudio = document.getElementById("lose-audio");
   if (loseAudio) {
     loseAudio.currentTime = 0;
@@ -890,42 +887,39 @@ function showGameOver(reasonText) {
 }
 
 
+
 function showWin() {
   scene = "win";
   isFinished = true;
   dialogLayer.innerHTML = "";
 
-  // Tắt mọi âm thanh đang phát (chuông + cuộc gọi)
   const ringtone = document.getElementById("ringtone-audio");
-  if (ringtone) {
-    ringtone.pause();
-    ringtone.currentTime = 0;
-  }
-  if (callAudio) {
-    callAudio.pause();
-    callAudio.currentTime = 0;
-  }
+  if (ringtone) { ringtone.pause(); ringtone.currentTime = 0; }
+  if (callAudio) { callAudio.pause(); callAudio.currentTime = 0; }
 
   const card = document.createElement("div");
   card.className = "scene-card";
 
   card.innerHTML = `
     <div class="pill-badge pill-success">
-      ✅ CHIẾN THẮNG · Bạn đã phá mật mã an toàn
+      ✅ CHIẾN THẮNG · Bạn đã phá được C.L.O
     </div>
     <div class="result-title">Bạn đã thoát hiểm thành công! 🎉</div>
     <div class="result-sub">
       Bạn đã:
       <ul style="margin-top:6px;padding-left:18px;list-style:disc;">
-        <li><b>Tỉnh táo</b> nhận ra cờ đỏ từ tài khoản lạ "CrushBắcSơn".</li>
-        <li><b>Không chuyển tiền</b> cho kẻ mạo danh "công an mạng".</li>
+        <li><b>Tỉnh táo</b> nhận ra sự thân mật bất thường từ tài khoản lạ.</li>
+        <li><b>Không chuyển tiền</b> cho kẻ mạo danh “cơ quan chức năng”.</li>
         <li><b>Không đi gặp một mình</b>, mà chọn ở nơi an toàn và báo cho người lớn/tổng đài 111.</li>
       </ul>
     </div>
     <div class="result-sub">
-      <b>C.L.O – Close Lies Online:</b> Không thỏa hiệp – Không hoảng loạn – Không đi một mình.<br/>
-      Đó là bộ quy tắc an toàn khi đối mặt với các hành vi thao túng hoặc đe doạ trên không gian mạng.
+      <b>C.L.O – Close Lies Online:</b> Nhận biết – Tránh né – Báo người lớn.<br/>
+      Đây là cách bạn bảo vệ chính mình và bạn bè khỏi các hành vi thân mật giả danh trên mạng.
     </div>
+
+    <!-- NEW FOOTER -->
+    <div class="copyright-footer">All rights reserved © 2025</div>
   `;
 
   const actions = document.createElement("div");
@@ -942,9 +936,9 @@ function showWin() {
   shareBtn.addEventListener("click", () => {
     alert(
       "Gợi ý triển khai:\n\n" +
-        "- Cho từng nhóm trong lớp cùng chọn A/B/C.\n" +
-        "- Dừng ở mỗi câu để phân tích thêm nguy cơ.\n" +
-        "- Sau game, ghi lại \"bộ quy tắc an toàn\" dán trong lớp."
+      "- Cho các nhóm lớp cùng chọn A/B/C.\n" +
+      "- Tạm dừng mỗi câu để thảo luận.\n" +
+      "- Sau game, ghi lại \"bộ quy tắc an toàn online\" dán trong lớp."
     );
   });
 
@@ -954,7 +948,7 @@ function showWin() {
 
   dialogLayer.appendChild(card);
 
-  // 🔊 Phát nhạc thắng
+  // Nhạc thắng
   const winAudio = document.getElementById("win-audio");
   if (winAudio) {
     winAudio.currentTime = 0;
@@ -962,6 +956,7 @@ function showWin() {
     winAudio.play().catch(() => {});
   }
 }
+
 
 
 // -------- RESET GAME --------
