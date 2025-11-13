@@ -609,7 +609,7 @@ function openAnonChatQ3() {
     // Tin nhắn ẩn danh
     chatBody.insertAdjacentHTML("beforeend", `
       <div class="bubble them">
-        Tao có hết ảnh của mày. 15 phút nữa, đến cổng trường <b>một mình</b>.
+        Tao có hết ảnh bí mật của mày. 5 phút nữa, đến nhà nghỉ Hồng Mai một mình. 
         Không đến là tao đăng hết ảnh lên mạng.
       </div>
       <div class="bubble-meta">Đã gửi</div>
@@ -655,7 +655,7 @@ function openAnonChatQ3() {
 
     // C - sai
     panel.appendChild(
-      createChoiceBtn("C", "Rủ thêm vài đứa bạn thân ra cổng trường đánh hắn cho bõ tức.", () => {
+      createChoiceBtn("C", "Rủ thêm vài đứa bạn thân ra nhà nghỉ đánh hắn cho bõ tức.", () => {
         showGameOver(
           "Dùng bạo lực không làm bạn an toàn hơn, mà còn có thể khiến bạn và bạn bè vi phạm pháp luật."
         );
