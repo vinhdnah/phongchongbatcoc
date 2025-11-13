@@ -646,7 +646,7 @@ function openAnonChatQ3() {
 
     // B - đúng (WIN)
     panel.appendChild(
-      createChoiceBtn("B", "Ở yên trong nhà/trường, báo ngay cho giáo viên hoặc phụ huynh, sau đó gọi tổng đài 111.", () => {
+      createChoiceBtn("B", "Ở yên trong nhà/trường, báo ngay cho giáo viên hoặc phụ huynh, sau đó gọi tổng đài 113.", () => {
         // Ẩn câu hỏi + lựa chọn trước khi chuyển kết quả (gọn UI)
         afterBox.style.display = "none";
         showWin();
@@ -706,38 +706,50 @@ function openCallQuestion() {
   optionsDiv.appendChild(
     createChoiceBtn("A", "Vội vã chuyển ngay 200k để khỏi bị bắt, tính sau.", () => {
       showGameOver(
-        "Bạn đã chủ động chuyển tiền cho kẻ mạo danh công an. Công an thật không làm việc qua Zalo, không dọa bắt và không yêu cầu chuyển 'lệ phí xác minh' vào tài khoản cá nhân."
+        "Bạn đã chủ động chuyển tiền cho kẻ mạo danh công an... Bạn xử lý trong trạng thái sợ hãi và gần như một mình, đúng với kịch bản kẻ xấu mong muốn: cô lập – gây áp lực – ép làm theo yêu cầu."
       );
     })
   );
 
-  // ✅ B - Đúng: quay về INBOX, mở khoá thread Ẩn danh; Q3 sẽ hiển thị như chat (typing → tin nhắn → mới hiện câu hỏi)
+// B — đáp án đúng (đã sửa theo yêu cầu)
   optionsDiv.appendChild(
     createChoiceBtn(
       "B",
       "Cúp máy ngay, chặn số, lưu lại bằng chứng rồi báo với phụ huynh/giáo viên.",
       () => {
-        // Mở khoá Câu 3 dưới dạng 1 thread mới ở Inbox
+        // Tin nhắn mở đầu cho tình huống ẩn danh (Câu 3)
+        window.q3OpeningMessage = `
+          "Tao có hết ảnh bí mật của mày. 5 phút nữa, đến <b>nhà nghỉ Hồng Mai</b> một mình.
+          Không đến là tao đăng hết ảnh lên mạng."
+        `;
+
         window.q3ThreadUnlocked = true;
-        window.fromDeclineFlow  = true;  // để Inbox có hiệu ứng 'vừa tới'
+        window.fromDeclineFlow = true;
         openInboxScene();
-        // (đừng gọi openQuestion3 trực tiếp nữa; thread 'Tài khoản ẩn danh' sẽ xuất hiện để người chơi bấm vào)
       }
     )
   );
 
-  // C - Sai
+  // C — đáp án sai (đã thay nội dung kết quả theo file)
   optionsDiv.appendChild(
     createChoiceBtn(
       "C",
-      "Giữ máy, xin xỏ và cố gắng giải thích để họ 'tha'.",
+      "Rủ thêm vài đứa bạn thân ra nhà nghỉ đánh hắn cho bõ tức.",
       () => {
-        showGameOver(
-          "Càng kéo dài cuộc gọi, bạn càng bị gây áp lực tâm lý, dễ bị dụ cung cấp thêm thông tin cá nhân hoặc chuyển thêm tiền."
-        );
+        showGameOver(`
+          Dùng bạo lực không làm bạn an toàn hơn, mà còn có thể khiến bạn và bạn bè vi phạm pháp luật.<br><br>
+          Trong trạng thái <b>sợ hãi, nôn nóng và chưa hiểu ý đồ của chúng</b>.
+          Kì thực, có thể <b>chúng không có mặt ở nhà nghỉ</b> mà đang điều khiển bạn từ xa
+          để bạn rơi vào một kịch bản nguy hiểm hơn:<br><br>
+          • Tự trói chân tay<br>
+          • Tự dàn dựng cảnh bị bắt cóc<br>
+          • Chúng quay video, gọi điện tống tiền phụ huynh
+        `);
       }
     )
   );
+
+
 
   card.appendChild(optionsDiv);
   dialogLayer.appendChild(card);
