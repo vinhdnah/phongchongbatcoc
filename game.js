@@ -883,12 +883,21 @@ function showGameOver(reasonText) {
     );
   });
 
+
+
+
   actions.appendChild(retryBtn);
   actions.appendChild(tipsBtn);
   card.appendChild(actions);
 
   dialogLayer.appendChild(card);
+  // ====== NÚT CREDIT ======
+const creditBtn = document.createElement("button");
+creditBtn.className = "ghost-btn";
+creditBtn.textContent = "Credit";
+creditBtn.addEventListener("click", showCredit);
 
+actions.appendChild(creditBtn);
   // Âm thanh thua
   const loseAudio = document.getElementById("lose-audio");
   if (loseAudio) {
@@ -954,10 +963,17 @@ function showWin() {
     );
   });
 
+
   actions.appendChild(retryBtn);
   actions.appendChild(shareBtn);
   card.appendChild(actions);
+// ====== NÚT CREDIT ======
+const creditBtn = document.createElement("button");
+creditBtn.className = "ghost-btn";
+creditBtn.textContent = "Credit";
+creditBtn.addEventListener("click", showCredit);
 
+actions.appendChild(creditBtn);
   dialogLayer.appendChild(card);
 
   // Nhạc thắng
@@ -969,6 +985,36 @@ function showWin() {
   }
 }
 
+
+function showCredit() {
+  const creditBox = document.createElement("div");
+  creditBox.className = "center-notice";
+  creditBox.style.maxWidth = "480px";
+  creditBox.style.zIndex = "99999";
+
+  creditBox.innerHTML = `
+    <div class="notice-title">📘 Credit</div>
+    <div class="notice-sub" style="color:#e5e7eb; line-height:1.5;">
+      • Nội dung & kịch bản: <b>GVHD + Nhóm nghiên cứu</b><br>
+      • Thiết kế & phát triển minigame: <b>V</b><br>
+      • Dự án nghiên cứu: “Cảnh giác Lừa đảo Online”<br>
+      • Âm thanh, hình ảnh: nguồn mở miễn phí<br><br>
+      <i>Cảm ơn bạn đã trải nghiệm minigame!</i>
+    </div>
+
+    <button id="close-credit" class="ghost-btn" 
+      style="margin-top:14px; padding:6px 16px;">
+      Đóng
+    </button>
+  `;
+
+  document.body.appendChild(creditBox);
+
+  document.getElementById("close-credit").onclick = () => {
+    creditBox.classList.add("fade-out");
+    setTimeout(() => creditBox.remove(), 300);
+  };
+}
 
 
 // -------- RESET GAME --------
