@@ -996,7 +996,7 @@ function showCredit() {
     <div class="notice-title">📘 Credit</div>
     <div class="notice-sub" style="color:#e5e7eb; line-height:1.5;">
       • Nội dung & kịch bản: <b>GVHD + Nhóm nghiên cứu</b><br>
-      • Thiết kế & phát triển minigame: <b>V</b><br>
+      • Thiết kế & phát triển minigame: <b>V and T</b><br>
       • Dự án nghiên cứu: “Cảnh giác Lừa đảo Online”<br>
       • Âm thanh, hình ảnh: nguồn mở miễn phí<br><br>
       <i>Cảm ơn bạn đã trải nghiệm minigame!</i>
