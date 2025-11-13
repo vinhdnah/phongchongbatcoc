@@ -93,7 +93,7 @@ function openInboxScene() {
           />
           Messenger
         </div>
-        <div class="phone-header-sub">Bạn bè · Trường Bắc Sơn</div>
+        <div class="phone-header-sub">Bạn bè · Một trường THPT</div>
       </div>
     </div>
     <div class="inbox-list" id="inbox-list"></div>
@@ -126,7 +126,7 @@ function openInboxScene() {
   }
 
   // ---- CRUSH ----
-  const CRUSH_NAME = "Nguyễn Hồng Linh";
+  const CRUSH_NAME = "Tài khoản lạ";
   const addCrush = () => {
     const isBlocked = !!window.chatQ1Blocked;
     const preview   = isBlocked ? "Đã chặn người này" : "Mình ngưỡng mộ bạn từ...";
@@ -233,7 +233,7 @@ function openChatQ1() {
     <img class="avatar-circle" src="img/avatar-boy.webp" alt="Nam sinh lớp 12" />
     <div class="avatar-name">Nam sinh · Lớp 12</div>
     <div style="font-size:12px;color:#9ca3af;text-align:center">
-      Bạn đang ở trong phòng ngủ, vừa xem lại điểm kiểm tra...
+      Bạn đang ngồi trong phòng học buổi tối thì nhận được tin nhắn từ một tài khoản lạ...
     </div>
   `;
 
@@ -244,7 +244,7 @@ function openChatQ1() {
       <button class="back-btn" id="back-to-inbox">←</button>
       <img class="phone-header-avatar avatar-crush" src="img/avatar-girl.png" alt="Crush Bắc Sơn" />
       <div class="phone-header-info">
-        <div class="phone-header-name">Nguyễn Hồng Linh</div>
+        <div class="phone-header-name">Tài khoản lạ</div>
         <div class="phone-header-sub">Hoạt động gần đây</div>
       </div>
     </div>
@@ -293,7 +293,7 @@ function openChatQ1() {
     typing1.remove();
 
     chatBody.insertAdjacentHTML("beforeend", `
-      <div class="bubble them">Mình ngưỡng mộ bạn từ lâu rồi đó.</div>
+      <div class="bubble them">Chào bạn, mình thấy bạn rất dễ thương nên muốn kết bạn làm quen.</div>
       <div class="bubble-meta">Đã gửi · 1 phút trước</div>
     `);
     playTingSafe();
@@ -307,8 +307,8 @@ function openChatQ1() {
 
       chatBody.insertAdjacentHTML("beforeend", `
         <div class="bubble them">
-          Mình thấy bạn thật sự rất tuyệt vời. Nhưng dạo này bạn có vẻ buồn — có chuyện gì sao?<br/>
-          Bạn có thể chia sẻ với mình, mình muốn làm bạn online của bạn.
+          Mình theo dõi bạn một thời gian rồi, cảm giác bạn đang có chuyện gì buồn? 
+          Bạn cứ chia sẻ với mình nhé, mình muốn làm bạn tâm sự online của bạn.
         </div>
         <div class="bubble-meta">Đã gửi</div>
       `);
@@ -323,7 +323,7 @@ function openChatQ1() {
 
     const footer = document.createElement("div");
     footer.className = "phone-footer";
-    footer.textContent = "Câu hỏi 1: Cờ đỏ ngôn từ bạn nhận ra là gì?";
+    footer.textContent = "Câu hỏi 1: Bạn sẽ làm gì khi nhận được tin nhắn thân mật từ một người chưa từng quen biết như thế này? ";
 
     const choices = document.createElement("div");
     choices.className = "choice-panel";
@@ -361,8 +361,7 @@ function openChatQ1() {
               <div class="notice-icon">🏆</div>
               <div class="notice-title">Chúc mừng bạn đã thoát hiểm!</div>
               <div class="notice-sub">
-                Bạn đã tránh được nguy cơ bị kẻ xấu lạm dụng, thao túng tâm lý
-                và về lâu dài có thể bị bắt cóc online.
+                Bạn đã tránh được một hành vi tiếp cận mang tính thao túng và giả thân mật từ người lạ trên mạng.
               </div>
             </div>
           `;
@@ -441,7 +440,7 @@ function openCallScene() {
     <div class="call-screen">
       <div class="call-main">
         <img class="call-avatar avatar-police" src="img/avatar-police.png" alt="Công an mạng" />
-        <div class="call-name">"Công an mạng"</div>
+        <div class="call-name">Công an mạng</div>
         <div class="call-sub">Số lạ · Không có trong danh bạ</div>
         <div class="call-timer" id="call-timer" style="display:none;">00:00</div>
       </div>
@@ -610,8 +609,8 @@ function openAnonChatQ3() {
     // Tin nhắn ẩn danh
     chatBody.insertAdjacentHTML("beforeend", `
       <div class="bubble them">
-        "Tao có hết ảnh của mày. 15 phút nữa, đến cổng trường <b>một mình</b>.
-        Không đến là tao đăng hết ảnh lên mạng."
+        Tao có hết ảnh của mày. 15 phút nữa, đến cổng trường <b>một mình</b>.
+        Không đến là tao đăng hết ảnh lên mạng.
       </div>
       <div class="bubble-meta">Đã gửi</div>
     `);
@@ -759,13 +758,13 @@ function openQuestion3() {
     <div class="scene-tag">Phần 3 · Lựa chọn sống còn</div>
     <div class="scene-title">Tin nhắn đe dọa cuối cùng</div>
     <div class="scene-description">
-      Sau khi bạn chặn số lạ, vài phút sau xuất hiện một tin nhắn nặc danh:
+      Sau khi bạn chặn số lạ, một tài khoản vô danh tiếp tục nhắn tin đe doạ:
     </div>
     <div class="chat-box">
       <div class="chat-label">Tin nhắn nặc danh</div>
       <div>
-        "Tao có hết ảnh của mày. 15 phút nữa, đến cổng trường <b>một mình</b>.
-        Không đến là tao đăng hết ảnh lên mạng."
+        "Tao có ảnh riêng tư của mày. 15 phút nữa ra khu vực trước trường,<b> một mình.</b>.
+        Không thì tao đăng lên mạng."
       </div>
     </div>
     <div class="question">Câu hỏi 3: Hành động nào giúp bạn còn đường sống an toàn nhất?</div>
@@ -924,8 +923,8 @@ function showWin() {
       </ul>
     </div>
     <div class="result-sub">
-      <b>Mật mã Bắc Sơn:</b> Không thỏa hiệp – Không hoảng loạn – Không đi một mình.<br/>
-      Đó là cách bạn bảo vệ chính mình và giúp bạn bè xung quanh an toàn hơn trên không gian mạng.
+      <b>C.L.O – Close Lies Online:</b> Không thỏa hiệp – Không hoảng loạn – Không đi một mình.<br/>
+      Đó là bộ quy tắc an toàn khi đối mặt với các hành vi thao túng hoặc đe doạ trên không gian mạng.
     </div>
   `;
 
